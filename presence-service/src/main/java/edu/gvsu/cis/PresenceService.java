@@ -1,4 +1,5 @@
-//package edu.gvsu.cis;
+package edu.gvsu.cis;
+
 public class PresenceService
 {
 	public static void main(String[] args)
