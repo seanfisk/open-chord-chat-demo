@@ -1,0 +1,6 @@
+# ingore artifacts
+/*/target/
+
+# ignore generated eclipse projects
+.classpath
+.project
