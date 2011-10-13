@@ -1,6 +1,6 @@
 package edu.gvsu.cis.cis656.lab2;
 /**
- * <p>Title: Lab1</p>
+ * <p>Title: Lab2</p>
  * <p>Description: Old School Instant Messaging Application </p>
  * @author Jonathan Engelsma
  * @version 1.0
