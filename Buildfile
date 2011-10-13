@@ -41,8 +41,28 @@ define 'talk' do
   
   desc 'Chat client'
   define 'client' do
+    main_class = 'edu.gvsu.cis.cis656.lab2.ChatClient'
+    java_rmi_server_hostname = 'localhost'
+    java_security_policy = "#{project.base_dir}/security.policy"
+    
     compile.with project('common')
+    manifest['Main-Class'] = main_class
     package(:jar).merge(project('common'))
+    
+    run.using :main => [main_class, "Mike"],
+    :properties => {
+      'java.rmi.server.codebase' => "file://#{project('common').package}",
+      'java.security.policy' => java_security_policy
+    }
+    
+    desc 'Run the client jar'
+    task 'run-jar' => ['package'] do
+      sh "java \
+'-Djava.rmi.server.codebase=file://#{package}' \
+'-Djava.security.policy=#{java_security_policy}' \
+-jar '#{package}' \
+Mike"
+    end
   end
 end
-  
+

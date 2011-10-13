@@ -17,6 +17,12 @@ public class PresenceServiceImpl implements PresenceService
 {
 	private HashMap<String, RegistrationInfo> users;
 
+	public PresenceServiceImpl()
+	{
+		super();
+		users = new HashMap<String, RegistrationInfo>();
+	}
+	
 	@Override public boolean register(RegistrationInfo reg) throws RemoteException
 	{
 		if(users.containsKey(reg.getUserName()))
