@@ -20,7 +20,11 @@ import java.util.Scanner;
  */
 public class ChatClient
 {
+	private static final int COLUMN_WIDTH = -40;
+	private static final String TWO_COLUMN_FORMAT = "%" + COLUMN_WIDTH + "s%" + COLUMN_WIDTH + "s";
+	
 	private PresenceService presenceService = null;
+	private String userName;
 	/**
 	 * @param args
 	 */
@@ -36,7 +40,7 @@ public class ChatClient
 			usage();
 		
 		// parse args
-		String username = args[0];
+		userName = args[0];
 		String host = null;
 		int port = 0;
 		if(args.length == 2)
@@ -89,7 +93,7 @@ public class ChatClient
 			
 			// set up registration info
 			RegistrationInfo reg = new RegistrationInfo(
-					username,
+					userName,
 					messageListener.getInetAddress().getHostAddress(),
 					messageListener.getLocalPort(),
 					true);
@@ -97,7 +101,7 @@ public class ChatClient
 			// register with the presence service
 			if(!presenceService.register(reg))
 			{
-				System.err.println("Sorry, the name `" + username + "' is taken.");
+				System.err.println("Sorry, the name `" + userName + "' is taken.");
 				System.exit(1);
 			}
 			
@@ -111,14 +115,22 @@ public class ChatClient
 			commands.put("quit", new QuitCommand());
 			
 			// print out command list
+			System.console().printf(TWO_COLUMN_FORMAT, "Command", "Description");
+			System.out.println();
+			for(int i = 0; i < 2 * -COLUMN_WIDTH; ++i)
+				System.out.print('-');
+			System.out.println('\n');
 			for(Command value : commands.values())
 				System.out.println(value);
-						
+									
 			// enter command loop
 			Scanner scanner = new Scanner(System.in);
 			
 			while(true)
 			{
+				// print prompt
+				System.out.print("\n> ");
+				
 				// grab command
 				Command command = commands.get(scanner.next());
 				
@@ -129,12 +141,12 @@ public class ChatClient
 					continue;
 				}
 				
-				// quit on quit command (cannot `break' in a class)
-				if(command instanceof QuitCommand)
-					break;
-				
 				// execute command
 				command.execute(scanner.nextLine());
+				
+				// quit on quit command (cannot `break' in a class)
+				if(command instanceof QuitCommand)
+					break;					
 			}
 			
 			// close the listening thread
@@ -177,12 +189,19 @@ public class ChatClient
 	{
 		public void execute(String args) throws RemoteException
 		{
-			System.out.println(presenceService.listRegisteredUsers());
+			System.console().printf(TWO_COLUMN_FORMAT, "Availability", "User");
+			System.out.println();
+			for(int i = 0; i < 2 * -COLUMN_WIDTH; ++i)
+				System.out.print('-');
+			System.out.println('\n');
+			for(RegistrationInfo reg : presenceService.listRegisteredUsers())
+				System.console().printf(TWO_COLUMN_FORMAT, reg.getStatus() ? "Available" : "Busy", reg.getUserName());
+			
 		}
 		
 		public String toString()
 		{
-			return "friends						list registered users and their availability";
+			return String.format(TWO_COLUMN_FORMAT, "friends", "list registered users and their availability");
 		}
 	}
 	
@@ -191,12 +210,12 @@ public class ChatClient
 	{
 		public void execute(String args) throws RemoteException
 		{
-			
+			presenceService.unregister(userName);
 		}
 		
 		public String toString()
 		{
-			return "quit						Exit the chat client";
+			return String.format(TWO_COLUMN_FORMAT, "quit", "Exit the chat client");
 		}
 	}
 	
@@ -206,19 +225,19 @@ public class ChatClient
 		public void execute(String args) throws RemoteException
 		{
 			Scanner scanner = new Scanner(args);
-			String username = scanner.next();
+			String recipient = scanner.next();
 			String message = scanner.nextLine();
-			RegistrationInfo reg = presenceService.lookup(username);
+			RegistrationInfo reg = presenceService.lookup(recipient);
 			
 			if(reg == null)
 			{
-				System.out.println("User `" + username + "' isn't registered on this server.");
+				System.out.println("User `" + recipient + "' isn't registered on this server.");
 				return;
 			}
 			
 			if(!reg.getStatus())
 			{
-				System.out.println("User `" + username + "' isn't available right now.");
+				System.out.println("User `" + recipient + "' isn't available right now.");
 				return;
 			}
 			
@@ -226,7 +245,7 @@ public class ChatClient
 			{
 				Socket socket = new Socket(reg.getHost(), reg.getPort());
 				PrintWriter out = new PrintWriter(socket.getOutputStream());
-				out.println(message);
+				out.println(userName + "> " + message);
 				out.close();
 				socket.close();
 			}
@@ -244,7 +263,7 @@ public class ChatClient
 		
 		public String toString()
 		{
-			return "talk {username} {message}	send a message to another user";
+			return String.format(TWO_COLUMN_FORMAT, "talk {username} {message}", "send a message to another user");
 		}
 	}
 }
