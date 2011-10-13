@@ -34,7 +34,7 @@ public class PresenceServiceImpl implements PresenceService
 	@Override public void unregister(String userName) throws RemoteException
 	{
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override public RegistrationInfo lookup(String name) throws RemoteException
@@ -64,19 +64,6 @@ public class PresenceServiceImpl implements PresenceService
 			System.exit(1);
 		}
 
-		// parse port
-		int port;
-		try
-		{
-			port = Integer.parseInt(args[0]);
-		}
-		catch(NumberFormatException e) // for Integer.parseInt()
-		{
-			System.err.println("Invalid port number.");
-			e.printStackTrace();
-			System.exit(1);
-		}
-
 		// start rmi connection
 		if(System.getSecurityManager() == null)
 			System.setSecurityManager(new SecurityManager());
@@ -86,7 +73,26 @@ public class PresenceServiceImpl implements PresenceService
 			String name = "PresenceService";
 			PresenceService presenceService = new PresenceServiceImpl();
 			PresenceService stub = (PresenceService) UnicastRemoteObject.exportObject(presenceService, 0);
-			Registry registry = LocateRegistry.getRegistry();
+
+			Registry registry;
+			if(args.length == 1)
+			{
+				// parse port
+				int port = 0;
+				try
+				{
+					port = Integer.parseInt(args[0]);
+				}
+				catch(NumberFormatException e) // for Integer.parseInt()
+				{
+					System.err.println("Invalid port number.");
+					e.printStackTrace();
+					System.exit(1);
+				}
+				registry = LocateRegistry.getRegistry(port);
+			}
+			else
+				registry = LocateRegistry.getRegistry();
 			registry.rebind(name, stub);
 			System.out.println("PresenceServiceImpl bound");
 		}
