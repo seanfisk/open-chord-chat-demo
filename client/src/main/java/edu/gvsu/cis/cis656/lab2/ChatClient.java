@@ -13,6 +13,7 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.LinkedHashMap;
+import java.util.NoSuchElementException;
 import java.util.Scanner;
 
 /**
@@ -216,7 +217,7 @@ public class ChatClient
 			e.printStackTrace();
 		}
 	}
-	
+
 	// set availability
 	private void setAvailability(boolean available) throws RemoteException
 	{
@@ -261,13 +262,18 @@ public class ChatClient
 	{
 		public void execute(String args) throws RemoteException
 		{
+			if(args.length() == 0)
+			{
+				System.out.println("\nIncorrect format.\n" + this);
+				return;
+			}
 			for(RegistrationInfo reg : presenceService.listRegisteredUsers())
 			{
 				if(reg.getStatus() && !userName.equals(reg.getUserName()))
 					sendMessageToUser(reg.getUserName(), args);
 			}
 		}
-		
+
 		public String toString()
 		{
 			return String.format(TWO_COLUMN_FORMAT, "broadcast {message}", "send a message to all available users");
@@ -280,8 +286,18 @@ public class ChatClient
 		public void execute(String args) throws RemoteException
 		{
 			Scanner scanner = new Scanner(args);
-			String recipient = scanner.next();
-			String message = scanner.nextLine();
+			String recipient;
+			String message;
+			try
+			{
+				recipient = scanner.next();
+				message = scanner.nextLine();
+			}
+			catch(NoSuchElementException e)
+			{
+				System.out.println("\nIncorrect format.\n" + this);
+				return;
+			}
 
 			sendMessageToUser(recipient, message);
 		}
@@ -291,29 +307,29 @@ public class ChatClient
 			return String.format(TWO_COLUMN_FORMAT, "talk {username} {message}", "send a message to another user");
 		}
 	}
-	
+
 	// busy
 	private class BusyCommand implements Command
 	{
 		public void execute(String args) throws RemoteException
-		{			
+		{
 			setAvailability(false);
 		}
-		
+
 		public String toString()
 		{
 			return String.format(TWO_COLUMN_FORMAT, "busy", "do not receive messages");
 		}
 	}
-	
+
 	// available
 	private class AvailableCommand implements Command
 	{
 		public void execute(String args) throws RemoteException
-		{			
+		{
 			setAvailability(true);
 		}
-		
+
 		public String toString()
 		{
 			return String.format(TWO_COLUMN_FORMAT, "available", "receive messages");
