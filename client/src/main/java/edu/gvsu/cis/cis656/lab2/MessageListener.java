@@ -18,6 +18,7 @@ import java.net.SocketException;
 public class MessageListener implements Runnable
 {
 	private ServerSocket serverSocket;
+	private RegistrationInfo regInfo;
 	
 	public MessageListener()
 	{
@@ -41,6 +42,11 @@ public class MessageListener implements Runnable
 	public int getLocalPort()
 	{
 		return serverSocket.getLocalPort();
+	}
+	
+	public void setRegistrationInfo(RegistrationInfo regInfo)
+	{
+		this.regInfo = regInfo;
 	}
 	
 	public void close()
@@ -70,7 +76,7 @@ public class MessageListener implements Runnable
  				BufferedReader reader = new BufferedReader(new InputStreamReader(sock.getInputStream()));
  				String line;
  				while((line = reader.readLine()) != null)
- 					System.out.print(line + "\n> ");
+ 					System.out.print('\n' + line + '\n' + regInfo.getUserName() + ':' + (regInfo.getStatus() ? "available" : "busy") + "> ");
  				
  				reader.close();
  				sock.close();
