@@ -7,6 +7,7 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.HashMap;
 import java.util.Vector;
 
 /**
@@ -14,39 +15,37 @@ import java.util.Vector;
  */
 public class PresenceServiceImpl implements PresenceService
 {
-	public PresenceServiceImpl()
-	{
-		// TODO Auto-generated constructor stub
-	}
+	private HashMap<String, RegistrationInfo> users;
 
 	@Override public boolean register(RegistrationInfo reg) throws RemoteException
 	{
-		// TODO Auto-generated method stub
-		return false;
+		if(users.containsKey(reg.getUserName()))
+			return false;
+		users.put(reg.getUserName(), reg);
+		return true;
 	}
 
 	@Override public boolean updateRegistrationInfo(RegistrationInfo reg) throws RemoteException
 	{
-		// TODO Auto-generated method stub
-		return false;
+		if(!users.containsKey(reg.getUserName()))
+			return false;
+		users.put(reg.getUserName(), reg);
+		return true;
 	}
 
 	@Override public void unregister(String userName) throws RemoteException
 	{
-		// TODO Auto-generated method stub
-
+		users.remove(userName);
 	}
 
 	@Override public RegistrationInfo lookup(String name) throws RemoteException
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return users.get(name);
 	}
 
 	@Override public Vector<RegistrationInfo> listRegisteredUsers() throws RemoteException
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return (Vector<RegistrationInfo>) users.values();
 	}
 
 	/**
