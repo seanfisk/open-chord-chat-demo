@@ -48,20 +48,20 @@ public class ChatClient
 		int port = 0;
 		if(args.length == 2)
 		{
-			String hostport[] = args[1].split(":", 2);
-			if(hostport.length > 0)
+			String hostPort[] = args[1].split(":", 2);
+			if(hostPort.length > 0)
 			{
-				host = hostport[0];
+				host = hostPort[0];
 
 				// print usage - must give a host if a port is given
-				if(host == "")
+				if(host.length() == 0)
 					usage();
 			}
-			if(hostport.length > 1)
+			if(hostPort.length > 1)
 			{
 				try
 				{
-					port = Integer.parseInt(hostport[1]);
+					port = Integer.parseInt(hostPort[1]);
 				}
 				catch(NumberFormatException e) // for Integer.parseInt()
 				{
@@ -83,19 +83,23 @@ public class ChatClient
 			// just supply them)
 			Registry registry;
 			if(host != null && port != 0)
-				registry = LocateRegistry.getRegistry(host, port);
+				registry = LocateRegistry.getRegistry(host, port);				
 			else if(host != null)
 				registry = LocateRegistry.getRegistry(host);
 			else
 				registry = LocateRegistry.getRegistry();
 
 			// get the handle to the presence service
-			presenceService = (PresenceService) registry.lookup("PresenceService");
+			presenceService = (PresenceService)registry.lookup("PresenceService");
 
 			// bind the server socket behind the message listener
 			MessageListener messageListener = new MessageListener();
 
 			// set up registration info
+			// the address provided by
+			// `messageListener.getInetAddress().getHostAddress()' will most
+			// likely be wrong, and it almost definitely won't be an external IP
+			// it gets fixed at the server
 			regInfo = new RegistrationInfo(userName, messageListener.getInetAddress().getHostAddress(), messageListener.getLocalPort(), true);
 			messageListener.setRegistrationInfo(regInfo);
 
@@ -346,7 +350,7 @@ public class ChatClient
 
 		public String toString()
 		{
-			return String.format(TWO_COLUMN_FORMAT, "exit", "Exit the chat client");
+			return String.format(TWO_COLUMN_FORMAT, "exit", "exit the chat client");
 		}
 	}
 }

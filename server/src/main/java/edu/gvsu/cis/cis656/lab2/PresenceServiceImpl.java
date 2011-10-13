@@ -6,6 +6,8 @@ package edu.gvsu.cis.cis656.lab2;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.rmi.server.RemoteServer;
+import java.rmi.server.ServerNotActiveException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.LinkedHashMap;
 import java.util.Vector;
@@ -22,20 +24,30 @@ public class PresenceServiceImpl implements PresenceService
 		super();
 		users = new LinkedHashMap<String, RegistrationInfo>();
 	}
-	
-	@Override public boolean register(RegistrationInfo reg) throws RemoteException
+
+	@Override public boolean register(RegistrationInfo regInfo) throws RemoteException
 	{
-		if(users.containsKey(reg.getUserName()))
+		try
+		{
+			// update the host to be more accurate
+			// this should be the external IP
+			regInfo.setHost(RemoteServer.getClientHost());
+		}
+		catch(ServerNotActiveException e)
+		{
+			e.printStackTrace();
+		}
+		if(users.containsKey(regInfo.getUserName()))
 			return false;
-		users.put(reg.getUserName(), reg);
+		users.put(regInfo.getUserName(), regInfo);
 		return true;
 	}
 
-	@Override public boolean updateRegistrationInfo(RegistrationInfo reg) throws RemoteException
+	@Override public boolean updateRegistrationInfo(RegistrationInfo regInfo) throws RemoteException
 	{
-		if(!users.containsKey(reg.getUserName()))
+		if(!users.containsKey(regInfo.getUserName()))
 			return false;
-		users.put(reg.getUserName(), reg);
+		users.put(regInfo.getUserName(), regInfo);
 		return true;
 	}
 
@@ -75,9 +87,8 @@ public class PresenceServiceImpl implements PresenceService
 
 		try
 		{
-			String name = "PresenceService";
 			PresenceService presenceService = new PresenceServiceImpl();
-			PresenceService stub = (PresenceService) UnicastRemoteObject.exportObject(presenceService, 0);
+			PresenceService stub = (PresenceService)UnicastRemoteObject.exportObject(presenceService, 0);
 
 			Registry registry;
 			if(args.length == 1)
@@ -95,10 +106,15 @@ public class PresenceServiceImpl implements PresenceService
 					System.exit(1);
 				}
 				registry = LocateRegistry.getRegistry(port);
+				System.out.println("Server running on localhost:" + port);
 			}
 			else
+			{
 				registry = LocateRegistry.getRegistry();
-			registry.rebind(name, stub);
+				System.out.println("Server running on localhost:1099");
+			}
+
+			registry.rebind("PresenceService", stub);
 			System.out.println("PresenceServiceImpl bound");
 		}
 		catch(Exception e)
