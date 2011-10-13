@@ -16,7 +16,6 @@ define 'talk' do
   define 'server' do
     main_class = 'edu.gvsu.cis.cis656.lab2.PresenceServiceImpl'
     java_rmi_server_hostname = 'localhost'
-    java_rmi_server_codebase = "file://#{package}"
     java_security_policy = "#{project.base_dir}/security.policy"
     
     compile.with project('common')
@@ -26,7 +25,7 @@ define 'talk' do
     run.using :main => main_class,
     :properties => {
       'java.rmi.server.hostname' => java_rmi_server_hostname,
-      'java.rmi.server.codebase' => java_rmi_server_codebase,
+      'java.rmi.server.codebase' => "file://#{project('common').package}",
       'java.security.policy' => java_security_policy
     }
     
@@ -34,7 +33,7 @@ define 'talk' do
     task 'run-jar' => ['package'] do
       sh "java \
 -Djava.rmi.server.hostname=#{java_rmi_server_hostname} \
-'-Djava.rmi.server.codebase=#{java_rmi_server_codebase}' \
+'-Djava.rmi.server.codebase=file://#{package}' \
 '-Djava.security.policy=#{java_security_policy}' \
 -jar '#{package}'"
     end
@@ -45,5 +44,5 @@ define 'talk' do
     compile.with project('common')
     package(:jar).merge(project('common'))
   end
-end  
+end
   
