@@ -1,4 +1,3 @@
-
 package edu.gvsu.cis.cis656.lab2;
 
 /**
