@@ -4,3 +4,7 @@
 # ignore generated eclipse projects
 .classpath
 .project
+
+# RubyGems
+/Gemfile.lock
+/.bundle/

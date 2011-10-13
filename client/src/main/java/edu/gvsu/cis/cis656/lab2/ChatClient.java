@@ -21,7 +21,7 @@ import java.util.Scanner;
 public class ChatClient
 {
 	private static final int COLUMN_WIDTH = -40;
-	private static final String TWO_COLUMN_FORMAT = "%" + COLUMN_WIDTH + "s%" + COLUMN_WIDTH + "s";
+	private static final String TWO_COLUMN_FORMAT = "%" + COLUMN_WIDTH + "s%" + COLUMN_WIDTH + "s\n";
 	
 	private PresenceService presenceService = null;
 	private String userName;
@@ -115,13 +115,12 @@ public class ChatClient
 			commands.put("quit", new QuitCommand());
 			
 			// print out command list
-			System.console().printf(TWO_COLUMN_FORMAT, "Command", "Description");
-			System.out.println();
+			System.console().printf(TWO_COLUMN_FORMAT, "Command", "Description");			
 			for(int i = 0; i < 2 * -COLUMN_WIDTH; ++i)
 				System.out.print('-');
 			System.out.println('\n');
 			for(Command value : commands.values())
-				System.out.println(value);
+				System.out.print(value);
 									
 			// enter command loop
 			Scanner scanner = new Scanner(System.in);
@@ -190,7 +189,6 @@ public class ChatClient
 		public void execute(String args) throws RemoteException
 		{
 			System.console().printf(TWO_COLUMN_FORMAT, "Availability", "User");
-			System.out.println();
 			for(int i = 0; i < 2 * -COLUMN_WIDTH; ++i)
 				System.out.print('-');
 			System.out.println('\n');

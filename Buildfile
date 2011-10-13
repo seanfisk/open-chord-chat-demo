@@ -1,3 +1,5 @@
+require "faker" # for fake names
+
 desc 'Lab Exercise 2 - An old-school instant messaging implementation'
 define 'talk' do
   
@@ -49,7 +51,7 @@ define 'talk' do
     manifest['Main-Class'] = main_class
     package(:jar).merge(project('common'))
     
-    run.using :main => [main_class, "Mike"],
+    run.using :main => [main_class, Faker::Name.first_name],
     :properties => {
       'java.rmi.server.codebase' => "file://#{project('common').package}",
       'java.security.policy' => java_security_policy
@@ -61,7 +63,7 @@ define 'talk' do
 '-Djava.rmi.server.codebase=file://#{package}' \
 '-Djava.security.policy=#{java_security_policy}' \
 -jar '#{package}' \
-Mike"
+#{Faker::Name.first_name}"
     end
   end
 end
