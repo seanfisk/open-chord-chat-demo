@@ -7,7 +7,7 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Vector;
 
 /**
@@ -15,12 +15,12 @@ import java.util.Vector;
  */
 public class PresenceServiceImpl implements PresenceService
 {
-	private HashMap<String, RegistrationInfo> users;
+	private LinkedHashMap<String, RegistrationInfo> users;
 
 	public PresenceServiceImpl()
 	{
 		super();
-		users = new HashMap<String, RegistrationInfo>();
+		users = new LinkedHashMap<String, RegistrationInfo>();
 	}
 	
 	@Override public boolean register(RegistrationInfo reg) throws RemoteException
@@ -51,7 +51,7 @@ public class PresenceServiceImpl implements PresenceService
 
 	@Override public Vector<RegistrationInfo> listRegisteredUsers() throws RemoteException
 	{
-		return (Vector<RegistrationInfo>) users.values();
+		return new Vector<RegistrationInfo>(users.values());
 	}
 
 	/**
