@@ -2,6 +2,8 @@ require "faker" # for fake names
 
 desc 'Lab Exercise 2 - An old-school instant messaging implementation'
 define 'talk' do
+  host = 'eos05.cis.gvsu.edu'
+  port = 1222
   
   # set up project specific information
   project.version = '1.0'
@@ -23,7 +25,7 @@ define 'talk' do
     manifest['Main-Class'] = main_class
     package(:jar).merge(project('common'))
     
-    run.using :main => [main_class, 1222],
+    run.using :main => [main_class, port],
     :properties => {
       'java.rmi.server.codebase' => "file://#{project('common').package}",
       'java.security.policy' => java_security_policy
@@ -34,7 +36,7 @@ define 'talk' do
       sh "java \
 '-Djava.rmi.server.codebase=file://#{package}' \
 '-Djava.security.policy=#{java_security_policy}' \
--jar '#{package}' 1222"
+-jar '#{package}' #{port}"
     end
   end
   
@@ -47,7 +49,7 @@ define 'talk' do
     manifest['Main-Class'] = main_class
     package(:jar).merge(project('common'))
     
-    run.using :main => [main_class, Faker::Name.first_name, 'eos10.cis.gvsu.edu:1222'],
+    run.using :main => [main_class, Faker::Name.first_name, "#{host}:#{port}"],
     :properties => {
       'java.rmi.server.codebase' => "file://#{project('common').package}",
       'java.security.policy' => java_security_policy
@@ -59,7 +61,7 @@ define 'talk' do
 '-Djava.rmi.server.codebase=file://#{package}' \
 '-Djava.security.policy=#{java_security_policy}' \
 -jar '#{package}' \
-#{Faker::Name.first_name} eos10.cis.gvsu.edu:1222"
+#{Faker::Name.first_name} #{host}:#{port}"
     end
   end
 end
