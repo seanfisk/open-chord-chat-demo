@@ -23,7 +23,7 @@ define 'talk' do
     manifest['Main-Class'] = main_class
     package(:jar).merge(project('common'))
     
-    run.using :main => main_class,
+    run.using :main => [main_class, 1222],
     :properties => {
       'java.rmi.server.codebase' => "file://#{project('common').package}",
       'java.security.policy' => java_security_policy
@@ -34,7 +34,7 @@ define 'talk' do
       sh "java \
 '-Djava.rmi.server.codebase=file://#{package}' \
 '-Djava.security.policy=#{java_security_policy}' \
--jar '#{package}'"
+-jar '#{package}' 1222"
     end
   end
   
@@ -47,7 +47,7 @@ define 'talk' do
     manifest['Main-Class'] = main_class
     package(:jar).merge(project('common'))
     
-    run.using :main => [main_class, Faker::Name.first_name],
+    run.using :main => [main_class, Faker::Name.first_name, 'eos10.cis.gvsu.edu:1222'],
     :properties => {
       'java.rmi.server.codebase' => "file://#{project('common').package}",
       'java.security.policy' => java_security_policy
@@ -59,7 +59,7 @@ define 'talk' do
 '-Djava.rmi.server.codebase=file://#{package}' \
 '-Djava.security.policy=#{java_security_policy}' \
 -jar '#{package}' \
-#{Faker::Name.first_name}"
+#{Faker::Name.first_name} eos10.cis.gvsu.edu:1222"
     end
   end
 end
