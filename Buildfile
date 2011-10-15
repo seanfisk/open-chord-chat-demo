@@ -17,7 +17,6 @@ define 'talk' do
   desc 'Presence service'
   define 'server' do
     main_class = 'edu.gvsu.cis.cis656.lab2.PresenceServiceImpl'
-    java_rmi_server_hostname = 'localhost'
     java_security_policy = "#{project.base_dir}/security.policy"
     
     compile.with project('common')
@@ -26,7 +25,6 @@ define 'talk' do
     
     run.using :main => main_class,
     :properties => {
-      'java.rmi.server.hostname' => java_rmi_server_hostname,
       'java.rmi.server.codebase' => "file://#{project('common').package}",
       'java.security.policy' => java_security_policy
     }
@@ -34,7 +32,6 @@ define 'talk' do
     desc 'Run the server jar'
     task 'run-jar' => ['package'] do
       sh "java \
--Djava.rmi.server.hostname=#{java_rmi_server_hostname} \
 '-Djava.rmi.server.codebase=file://#{package}' \
 '-Djava.security.policy=#{java_security_policy}' \
 -jar '#{package}'"
@@ -44,7 +41,6 @@ define 'talk' do
   desc 'Chat client'
   define 'client' do
     main_class = 'edu.gvsu.cis.cis656.lab2.ChatClient'
-    java_rmi_server_hostname = 'localhost'
     java_security_policy = "#{project.base_dir}/security.policy"
     
     compile.with project('common')
