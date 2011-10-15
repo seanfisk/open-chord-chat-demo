@@ -2,8 +2,8 @@ require "faker" # for fake names
 
 desc 'Lab Exercise 2 - An old-school instant messaging implementation'
 define 'talk' do
-  host = 'eos09.cis.gvsu.edu'
-  port = 1099
+  host = 'localhost'
+  port = 2468
   
   # set up project specific information
   project.version = '1.0'
@@ -63,6 +63,12 @@ define 'talk' do
 -jar '#{package}' \
 #{Faker::Name.first_name} #{host}:#{port}"
     end
+  end
+  
+  desc 'Convenience method to run the rmiregistry on the test port'
+  task 'rmiregistry' do
+  	puts "Running rmiregistry in the background on port #{port}"
+  	sh "rmiregistry #{port} &"
   end
 end
 
