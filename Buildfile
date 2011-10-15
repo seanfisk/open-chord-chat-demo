@@ -2,8 +2,8 @@ require "faker" # for fake names
 
 desc 'Lab Exercise 2 - An old-school instant messaging implementation'
 define 'talk' do
-  host = 'eos05.cis.gvsu.edu'
-  port = 1222
+  host = 'eos09.cis.gvsu.edu'
+  port = 1099
   
   # set up project specific information
   project.version = '1.0'
