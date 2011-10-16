@@ -3,6 +3,7 @@ package edu.gvsu.cis.cis656.lab2.command;
 import java.rmi.RemoteException;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
+import java.util.regex.Pattern;
 
 import edu.gvsu.cis.cis656.lab2.PresenceService;
 import edu.gvsu.cis.cis656.lab2.RegistrationInfo;
@@ -28,7 +29,8 @@ public class TalkCommand extends TalkingCommand
 		try
 		{
 			recipient = scanner.next();
-			message = scanner.nextLine();
+			scanner.skip("\\s*"); // skip whitespace
+			message = scanner.nextLine(); // grab rest of line
 		}
 		catch(NoSuchElementException e)
 		{
