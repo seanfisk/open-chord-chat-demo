@@ -12,12 +12,19 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
+import java.util.regex.Pattern;
 
+import jline.ArgumentCompletor;
+import jline.Completor;
 import jline.ConsoleReader;
-import jline.ConsoleReaderInputStream;
+import jline.MultiCompletor;
+import jline.NullCompletor;
+import jline.SimpleCompletor;
 
 /**
  * @author Sean Fisk <fiskse@mail.gvsu.edu>
@@ -116,6 +123,35 @@ public class ChatClient
 			// start the message listener
 			new Thread(messageListener).start();
 
+			// set up JLine console reader
+			ConsoleReader consoleReader = null;
+			try
+			{
+				consoleReader = new ConsoleReader();
+			}
+			catch(IOException e)
+			{
+				System.err.println("Error creating the JLine console reader.");
+				e.printStackTrace();
+				System.exit(1);
+			}
+
+			// use bell, history, and pagination
+			consoleReader.setBellEnabled(true);
+			consoleReader.setUseHistory(true);
+			consoleReader.setUsePagination(true);
+
+			String[] simpleCommands = {"friends", "broadcast", "busy", "available", "exit"};
+			SimpleCompletor simpleCommandsCompletor = new SimpleCompletor(simpleCommands);
+			SimpleCompletor talkCommandPrefixCompletor = new SimpleCompletor("talk");
+			FriendCompletor talkCommandFriendCompletor = new FriendCompletor();
+			Completor[] talkCommandArguments = {talkCommandPrefixCompletor, talkCommandFriendCompletor, new NullCompletor()};
+			ArgumentCompletor talkCommandCompletor = new ArgumentCompletor(talkCommandArguments);
+			MultiCompletor globalCompletor = new MultiCompletor(new Completor[] {simpleCommandsCompletor, talkCommandCompletor});
+			consoleReader.addCompletor(globalCompletor);
+
+			System.out.println(consoleReader.getCompletionHandler());
+			//
 			// add available commands
 			LinkedHashMap<String, Command> commands = new LinkedHashMap<String, Command>();
 			commands.put("friends", new FriendsCommand());
@@ -136,27 +172,17 @@ public class ChatClient
 			System.out.println();
 
 			// enter command loop
-			ConsoleReader consoleReader = null;
-			try
-			{
-				consoleReader = new ConsoleReader();
-			}
-			catch(IOException e)
-			{
-				System.err.println("Error creating the JLine console reader.");
-				e.printStackTrace();
-				System.exit(1);
-			}
-
-			ConsoleReaderInputStream consoleReaderStream = new ConsoleReaderInputStream(consoleReader);
-			Scanner scanner = new Scanner(consoleReaderStream);
-
+			Scanner scanner;
+			Pattern zeroBytePattern = Pattern.compile("\\z");
 			while(true)
 			{
 				// print prompt
-				System.out.print(userName + ':' + (regInfo.getStatus() ? "available" : "busy") + "> ");
+				String line = consoleReader.readLine(userName + ':' + (regInfo.getStatus() ? "available" : "busy") + "> ");
+				scanner = new Scanner(line);
+				// System.out.print(userName + ':' + (regInfo.getStatus() ?
+				// "available" : "busy") + "> ");
 
-				// grab command
+				// grab command with default delimiter Character.isWhitespace()
 				Command command = commands.get(scanner.next());
 
 				// check invalid
@@ -167,7 +193,8 @@ public class ChatClient
 				}
 
 				// execute command
-				command.execute(scanner.nextLine());
+				scanner.useDelimiter(zeroBytePattern);
+				command.execute(scanner.hasNext() ? scanner.next() : null);
 
 				// exit on exit command (cannot `break' in a class)
 				if(command instanceof ExitCommand)
@@ -193,6 +220,11 @@ public class ChatClient
 		{
 			e.printStackTrace();
 			System.exit(1);
+		}
+		catch(IOException e)
+		{
+			System.err.println("Error reading from the console.");
+			e.printStackTrace();
 		}
 	}
 
@@ -268,7 +300,6 @@ public class ChatClient
 			for(RegistrationInfo reg : presenceService.listRegisteredUsers())
 				System.console().printf(TWO_COLUMN_FORMAT, reg.getStatus() ? "Available" : "Busy", reg.getUserName() + (userName.equals(reg.getUserName()) ? " (You)" : ""));
 			System.out.println();
-
 		}
 
 		public String toString()
@@ -305,6 +336,11 @@ public class ChatClient
 	{
 		public void execute(String args) throws RemoteException
 		{
+			if(args == null)
+			{
+				System.out.println("\nIncorrect format.\n" + this);
+				return;
+			}
 			Scanner scanner = new Scanner(args);
 			String recipient;
 			String message;
@@ -368,5 +404,43 @@ public class ChatClient
 		{
 			return String.format(TWO_COLUMN_FORMAT, "exit", "exit the chat client");
 		}
+	}
+
+	// username completor
+	private class FriendCompletor implements Completor
+	{
+
+		@SuppressWarnings("unchecked") @Override public int complete(String buffer, int cursor, @SuppressWarnings("rawtypes") List clist)
+		{
+			String start = (buffer == null) ? "" : buffer;
+			try
+			{
+				for(RegistrationInfo reg : presenceService.listRegisteredUsers())
+				{
+					// only list them if they are available
+					String userName = reg.getUserName();
+					if(reg.getStatus() && userName.startsWith(start))
+						clist.add(userName);
+				}
+			}
+			catch(RemoteException e)
+			{
+				System.err.println("Could not retrieve the friends list.");
+				e.printStackTrace();
+			}
+			Collections.sort(clist);
+
+			// the rest is ripped from JLine's SimpleCompletor implementation
+			
+			// put a space after the completion if this is the only completion
+			if(clist.size() == 1)
+				clist.set(0, ((String) clist.get(0)) + " ");
+
+			// the index of the completion is always from the beginning of
+			// the buffer.
+			return clist.size() == 0 ? -1 : 0;
+
+		}
+
 	}
 }
