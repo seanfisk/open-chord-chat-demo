@@ -132,7 +132,7 @@ public class ChatClient
 			String[] simpleCommands = {"friends", "broadcast", "busy", "available", "exit"};
 			SimpleCompletor simpleCommandsCompletor = new SimpleCompletor(simpleCommands);
 			SimpleCompletor talkCommandPrefixCompletor = new SimpleCompletor("talk");
-			FriendCompletor talkCommandFriendCompletor = new FriendCompletor(presenceService);
+			FriendCompletor talkCommandFriendCompletor = new FriendCompletor(presenceService, userInfo);
 			Completor[] talkCommandArguments = {talkCommandPrefixCompletor, talkCommandFriendCompletor, new NullCompletor()};
 			ArgumentCompletor talkCommandCompletor = new ArgumentCompletor(talkCommandArguments);
 			MultiCompletor globalCompletor = new MultiCompletor(new Completor[] {simpleCommandsCompletor, talkCommandCompletor});

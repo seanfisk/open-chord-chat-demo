@@ -11,10 +11,12 @@ import edu.gvsu.cis.cis656.lab2.RegistrationInfo;
 public class FriendCompletor implements Completor
 {
 	PresenceService presenceService;
+	RegistrationInfo userInfo;
 
-	public FriendCompletor(PresenceService presenceService)
+	public FriendCompletor(PresenceService presenceService, RegistrationInfo userInfo)
 	{
 		this.presenceService = presenceService;
+		this.userInfo = userInfo;
 	}
 
 	@SuppressWarnings("unchecked") @Override public int complete(String buffer, int cursor, @SuppressWarnings("rawtypes") List clist)
@@ -22,11 +24,13 @@ public class FriendCompletor implements Completor
 		String start = (buffer == null) ? "" : buffer;
 		try
 		{
-			for(RegistrationInfo userInfo : presenceService.listRegisteredUsers())
+			for(RegistrationInfo otherUserInfo : presenceService.listRegisteredUsers())
 			{
 				// only list them if they are available
-				String userName = userInfo.getUserName();
-				if(userInfo.getStatus() && userName.startsWith(start))
+				String userName = otherUserInfo.getUserName();
+				if(otherUserInfo.getStatus() &&
+						userName.startsWith(start) &&
+						!userInfo.getUserName().equals(otherUserInfo.getUserName()))
 					clist.add(userName);
 			}
 		}
