@@ -28,9 +28,7 @@ public class FriendCompletor implements Completor
 			{
 				// only list them if they are available
 				String userName = otherUserInfo.getUserName();
-				if(otherUserInfo.getStatus() &&
-						userName.startsWith(start) &&
-						!userInfo.getUserName().equals(otherUserInfo.getUserName()))
+				if(otherUserInfo.getStatus() && userName.startsWith(start) && !userInfo.getUserName().equals(otherUserInfo.getUserName()))
 					clist.add(userName);
 			}
 		}

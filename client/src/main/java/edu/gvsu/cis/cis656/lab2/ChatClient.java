@@ -105,14 +105,14 @@ public class ChatClient
 			// likely be wrong, and it almost definitely won't be an external IP
 			// it gets fixed at the server
 			RegistrationInfo userInfo = new RegistrationInfo(userName, messageListener.getInetAddress().getHostAddress(), messageListener.getLocalPort(), true);
-			
+
 			// register with the presence service
 			if(!presenceService.register(userInfo))
 			{
 				System.err.println("Sorry, the name `" + userName + "' is taken.");
 				System.exit(1);
 			}
-			
+
 			// set up JLine console reader
 			ConsoleReader consoleReader = null;
 			try
@@ -185,7 +185,7 @@ public class ChatClient
 					// They didn't enter anything
 					continue;
 				}
-				
+
 				Command command = commands.get(commandString);
 
 				// check invalid

@@ -106,7 +106,8 @@ public class MessageListener implements Runnable
 	}
 
 	/**
-	 * @param consoleReader the consoleReader to set
+	 * @param consoleReader
+	 *            the consoleReader to set
 	 */
 	public void setConsoleReader(ConsoleReader consoleReader)
 	{
