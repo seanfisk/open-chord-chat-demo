@@ -28,6 +28,7 @@ import edu.gvsu.cis.cis656.lab2.command.ExitCommand;
 import edu.gvsu.cis.cis656.lab2.command.FriendsCommand;
 import edu.gvsu.cis.cis656.lab2.command.TalkCommand;
 import edu.gvsu.cis.cis656.lab2.completor.FriendCompletor;
+import edu.gvsu.cis.cis656.lab2.util.PromptBuilder;
 
 /**
  * @author Sean Fisk <fiskse@mail.gvsu.edu>
@@ -170,7 +171,7 @@ public class ChatClient
 			while(true)
 			{
 				// print prompt
-				String line = consoleReader.readLine(userName + ':' + (userInfo.getStatus() ? "available" : "busy") + "> ");
+				String line = consoleReader.readLine(PromptBuilder.buildPrompt(userInfo));
 				scanner = new Scanner(line);
 
 				// grab command with default delimiter Character.isWhitespace()

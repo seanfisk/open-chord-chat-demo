@@ -11,6 +11,7 @@ import java.rmi.UnknownHostException;
 
 import edu.gvsu.cis.cis656.lab2.PresenceService;
 import edu.gvsu.cis.cis656.lab2.RegistrationInfo;
+import edu.gvsu.cis.cis656.lab2.util.PromptBuilder;
 
 public abstract class TalkingCommand extends Command
 {
@@ -39,7 +40,7 @@ public abstract class TalkingCommand extends Command
 		{
 			Socket socket = new Socket(recipientInfo.getHost(), recipientInfo.getPort());
 			PrintWriter out = new PrintWriter(socket.getOutputStream());
-			out.println(userInfo.getUserName() + "> " + message);
+			out.println(PromptBuilder.buildPrompt(userInfo) + message);
 			out.close();
 			socket.close();
 		}
