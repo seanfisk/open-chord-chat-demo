@@ -11,6 +11,11 @@ define 'talk' do
   manifest['Copyright'] = 'Sean Fisk (C) 2011'
   compile.options.target = '1.6'
   
+  # dependencies
+  JLINE_VERSION = 1.0
+  JLINE = "jline:jline:jar:#{JLINE_VERSION}"
+  download artifact(JLINE) => "http://sourceforge.net/projects/jline/files/jline/#{JLINE_VERSION}/jline-#{JLINE_VERSION}.zip/download"
+  
   desc 'Common files'
   define 'common' do
     package :jar
@@ -45,7 +50,7 @@ define 'talk' do
     main_class = 'edu.gvsu.cis.cis656.lab2.ChatClient'
     java_security_policy = "#{project.base_dir}/security.policy"
     
-    compile.with project('common')
+    compile.with project('common'), JLINE
     manifest['Main-Class'] = main_class
     package(:jar).merge(project('common'))
     
@@ -67,7 +72,7 @@ define 'talk' do
   
   desc 'Convenience method to run the rmiregistry on the test port'
   task 'rmiregistry' do
-  	puts "Running rmiregistry in the background on port #{port}"
+    puts "Running rmiregistry in the background on port #{port}"
   	sh "rmiregistry #{port} &"
   end
 end
