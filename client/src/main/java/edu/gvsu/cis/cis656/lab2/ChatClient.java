@@ -15,6 +15,7 @@ import java.rmi.registry.Registry;
 import java.util.LinkedHashMap;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
+import jline.*;
 
 /**
  * @author Sean Fisk <fiskse@mail.gvsu.edu>
@@ -134,6 +135,7 @@ public class ChatClient
 
 			// enter command loop
 			Scanner scanner = new Scanner(System.in);
+			ConsoleReader consoleReader = new ConsoleReader();
 
 			while(true)
 			{
