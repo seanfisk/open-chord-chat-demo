@@ -14,22 +14,22 @@ import edu.gvsu.cis.cis656.lab2.RegistrationInfo;
 
 public abstract class TalkingCommand extends Command
 {
-	public TalkingCommand(String name, String argFormat, String description, PresenceService presenceService, RegistrationInfo regInfo)
+	public TalkingCommand(String name, String argFormat, String description, PresenceService presenceService, RegistrationInfo userInfo)
 	{
-		super(name, argFormat, description, presenceService, regInfo);
+		super(name, argFormat, description, presenceService, userInfo);
 	}
 
 	protected void sendMessageToUser(String recipient, String message) throws RemoteException
 	{
-		RegistrationInfo reg = presenceService.lookup(recipient);
+		RegistrationInfo recipientInfo = presenceService.lookup(recipient);
 
-		if(reg == null)
+		if(recipientInfo == null)
 		{
 			System.out.println("User `" + recipient + "' isn't registered on this server.");
 			return;
 		}
 
-		if(!reg.getStatus())
+		if(!recipientInfo.getStatus())
 		{
 			System.out.println("User `" + recipient + "' isn't available right now.");
 			return;
@@ -37,9 +37,9 @@ public abstract class TalkingCommand extends Command
 
 		try
 		{
-			Socket socket = new Socket(reg.getHost(), reg.getPort());
+			Socket socket = new Socket(recipientInfo.getHost(), recipientInfo.getPort());
 			PrintWriter out = new PrintWriter(socket.getOutputStream());
-			out.println(regInfo.getUserName() + "> " + message);
+			out.println(userInfo.getUserName() + "> " + message);
 			out.close();
 			socket.close();
 		}

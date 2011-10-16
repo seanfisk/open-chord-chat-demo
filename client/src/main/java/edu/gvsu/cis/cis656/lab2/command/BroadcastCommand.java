@@ -7,9 +7,9 @@ import edu.gvsu.cis.cis656.lab2.RegistrationInfo;
 
 public class BroadcastCommand extends TalkingCommand
 {
-	public BroadcastCommand(PresenceService presenceService, RegistrationInfo regInfo)
+	public BroadcastCommand(PresenceService presenceService, RegistrationInfo userInfo)
 	{
-		super("broadcast", "{message}", "send a message to all available users", presenceService, regInfo);
+		super("broadcast", "{message}", "send a message to all available users", presenceService, userInfo);
 	}
 
 	public void execute(String args) throws RemoteException
@@ -19,10 +19,10 @@ public class BroadcastCommand extends TalkingCommand
 			System.out.println("\nIncorrect format.\n" + this);
 			return;
 		}
-		for(RegistrationInfo reg : presenceService.listRegisteredUsers())
+		for(RegistrationInfo otherUserInfo : presenceService.listRegisteredUsers())
 		{
-			if(reg.getStatus() && !regInfo.getUserName().equals(reg.getUserName()))
-				sendMessageToUser(reg.getUserName(), args);
+			if(otherUserInfo.getStatus() && !userInfo.getUserName().equals(otherUserInfo.getUserName()))
+				sendMessageToUser(otherUserInfo.getUserName(), args);
 		}
 	}
 }

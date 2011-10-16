@@ -22,11 +22,11 @@ public class FriendCompletor implements Completor
 		String start = (buffer == null) ? "" : buffer;
 		try
 		{
-			for(RegistrationInfo reg : presenceService.listRegisteredUsers())
+			for(RegistrationInfo userInfo : presenceService.listRegisteredUsers())
 			{
 				// only list them if they are available
-				String userName = reg.getUserName();
-				if(reg.getStatus() && userName.startsWith(start))
+				String userName = userInfo.getUserName();
+				if(userInfo.getStatus() && userName.startsWith(start))
 					clist.add(userName);
 			}
 		}

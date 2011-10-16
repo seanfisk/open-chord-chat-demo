@@ -10,9 +10,9 @@ import edu.gvsu.cis.cis656.lab2.RegistrationInfo;
 // talk
 public class TalkCommand extends TalkingCommand
 {
-	public TalkCommand(PresenceService presenceService, RegistrationInfo regInfo)
+	public TalkCommand(PresenceService presenceService, RegistrationInfo userInfo)
 	{
-		super("talk", "{username} {message}", "send a message to another user", presenceService, regInfo);
+		super("talk", "{username} {message}", "send a message to another user", presenceService, userInfo);
 	}
 
 	public void execute(String args) throws RemoteException

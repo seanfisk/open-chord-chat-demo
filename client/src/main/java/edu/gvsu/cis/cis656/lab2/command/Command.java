@@ -12,15 +12,15 @@ public abstract class Command
 	protected String argFormat;
 	protected String description;
 	protected PresenceService presenceService;
-	protected RegistrationInfo regInfo;
+	protected RegistrationInfo userInfo;
 
-	public Command(String name, String argFormat, String description, PresenceService presenceService, RegistrationInfo regInfo)
+	public Command(String name, String argFormat, String description, PresenceService presenceService, RegistrationInfo userInfo)
 	{
 		this.name = name;
 		this.argFormat = argFormat;
 		this.description = description;
 		this.presenceService = presenceService;
-		this.regInfo = regInfo;
+		this.userInfo = userInfo;
 	}
 
 	public abstract void execute(String args) throws RemoteException;
@@ -98,7 +98,7 @@ public abstract class Command
 	 */
 	public RegistrationInfo getRegInfo()
 	{
-		return regInfo;
+		return userInfo;
 	}
 
 	/**
@@ -107,7 +107,7 @@ public abstract class Command
 	 */
 	public void setRegInfo(RegistrationInfo regInfo)
 	{
-		this.regInfo = regInfo;
+		this.userInfo = regInfo;
 	}
 
 	public String toString()

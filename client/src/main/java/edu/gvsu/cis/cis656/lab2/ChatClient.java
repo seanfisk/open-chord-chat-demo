@@ -102,11 +102,11 @@ public class ChatClient
 			// `messageListener.getInetAddress().getHostAddress()' will most
 			// likely be wrong, and it almost definitely won't be an external IP
 			// it gets fixed at the server
-			RegistrationInfo regInfo = new RegistrationInfo(userName, messageListener.getInetAddress().getHostAddress(), messageListener.getLocalPort(), true);
-			messageListener.setRegistrationInfo(regInfo);
+			RegistrationInfo userInfo = new RegistrationInfo(userName, messageListener.getInetAddress().getHostAddress(), messageListener.getLocalPort(), true);
+			messageListener.setRegistrationInfo(userInfo);
 
 			// register with the presence service
-			if(!presenceService.register(regInfo))
+			if(!presenceService.register(userInfo))
 			{
 				System.err.println("Sorry, the name `" + userName + "' is taken.");
 				System.exit(1);
@@ -143,7 +143,7 @@ public class ChatClient
 			consoleReader.addCompletor(globalCompletor);
 
 			// add available commands
-			Command[] commandList = {new FriendsCommand(presenceService, regInfo), new TalkCommand(presenceService, regInfo), new BroadcastCommand(presenceService, regInfo), new BusyCommand(presenceService, regInfo), new AvailableCommand(presenceService, regInfo), new ExitCommand(presenceService, regInfo)};
+			Command[] commandList = {new FriendsCommand(presenceService, userInfo), new TalkCommand(presenceService, userInfo), new BroadcastCommand(presenceService, userInfo), new BusyCommand(presenceService, userInfo), new AvailableCommand(presenceService, userInfo), new ExitCommand(presenceService, userInfo)};
 			LinkedHashMap<String, Command> commands = new LinkedHashMap<String, Command>();
 			for(Command command : commandList)
 				commands.put(command.getName(), command);
@@ -169,7 +169,7 @@ public class ChatClient
 			while(true)
 			{
 				// print prompt
-				String line = consoleReader.readLine(userName + ':' + (regInfo.getStatus() ? "available" : "busy") + "> ");
+				String line = consoleReader.readLine(userName + ':' + (userInfo.getStatus() ? "available" : "busy") + "> ");
 				scanner = new Scanner(line);
 				// System.out.print(userName + ':' + (regInfo.getStatus() ?
 				// "available" : "busy") + "> ");

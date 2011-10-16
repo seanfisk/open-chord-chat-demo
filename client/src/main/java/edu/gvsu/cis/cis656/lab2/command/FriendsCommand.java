@@ -8,9 +8,9 @@ import edu.gvsu.cis.cis656.lab2.RegistrationInfo;
 
 public class FriendsCommand extends Command
 {
-	public FriendsCommand(PresenceService presenceService, RegistrationInfo regInfo)
+	public FriendsCommand(PresenceService presenceService, RegistrationInfo userInfo)
 	{
-		super("friends", null, "list registered users and their availability", presenceService, regInfo);
+		super("friends", null, "list registered users and their availability", presenceService, userInfo);
 	}
 
 	public void execute(String args) throws RemoteException
@@ -28,9 +28,9 @@ public class FriendsCommand extends Command
 		for(int i = 0; i < 2 * COLUMN_WIDTH; ++i)
 			System.out.print('-');
 		System.out.println('\n');
-		for(RegistrationInfo reg : registeredUsers)
-			if(!regInfo.getUserName().equals(reg.getUserName()))
-				System.console().printf(TWO_COLUMN_FORMAT, reg.getStatus() ? "available" : "busy", reg.getUserName());
+		for(RegistrationInfo otherUserInfo : registeredUsers)
+			if(!userInfo.getUserName().equals(otherUserInfo.getUserName()))
+				System.console().printf(TWO_COLUMN_FORMAT, otherUserInfo.getStatus() ? "available" : "busy", otherUserInfo.getUserName());
 		System.out.println();
 	}
 }

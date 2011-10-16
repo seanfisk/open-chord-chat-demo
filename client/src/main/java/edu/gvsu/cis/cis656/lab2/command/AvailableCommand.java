@@ -7,9 +7,9 @@ import edu.gvsu.cis.cis656.lab2.RegistrationInfo;
 
 public class AvailableCommand extends AvailabilityCommand
 {
-	public AvailableCommand(PresenceService presenceService, RegistrationInfo regInfo)
+	public AvailableCommand(PresenceService presenceService, RegistrationInfo userInfo)
 	{
-		super("available", null, "receive messages", presenceService, regInfo);
+		super("available", null, "receive messages", presenceService, userInfo);
 	}
 
 	public void execute(String args) throws RemoteException
