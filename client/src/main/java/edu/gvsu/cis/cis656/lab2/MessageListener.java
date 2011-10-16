@@ -11,13 +11,15 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
 
+import jline.ConsoleReader;
+
 /**
  * @author Sean Fisk <fiskse@mail.gvsu.edu>
  */
 public class MessageListener implements Runnable
 {
 	private ServerSocket serverSocket;
-	private RegistrationInfo regInfo;
+	private ConsoleReader consoleReader;
 
 	public MessageListener()
 	{
@@ -41,11 +43,6 @@ public class MessageListener implements Runnable
 	public int getLocalPort()
 	{
 		return serverSocket.getLocalPort();
-	}
-
-	public void setRegistrationInfo(RegistrationInfo regInfo)
-	{
-		this.regInfo = regInfo;
 	}
 
 	public void close()
@@ -76,7 +73,12 @@ public class MessageListener implements Runnable
 				BufferedReader reader = new BufferedReader(new InputStreamReader(sock.getInputStream()));
 				String line;
 				while((line = reader.readLine()) != null)
-					System.out.print('\n' + line + '\n' + regInfo.getUserName() + ':' + (regInfo.getStatus() ? "available" : "busy") + "> ");
+				{
+					consoleReader.printString('\n' + line + '\n');
+					consoleReader.flushConsole();
+					consoleReader.drawLine();
+					consoleReader.flushConsole();
+				}
 
 				reader.close();
 				sock.close();
@@ -93,5 +95,21 @@ public class MessageListener implements Runnable
 			e.printStackTrace();
 			System.exit(1);
 		}
+	}
+
+	/**
+	 * @return the consoleReader
+	 */
+	public ConsoleReader getConsoleReader()
+	{
+		return consoleReader;
+	}
+
+	/**
+	 * @param consoleReader the consoleReader to set
+	 */
+	public void setConsoleReader(ConsoleReader consoleReader)
+	{
+		this.consoleReader = consoleReader;
 	}
 }

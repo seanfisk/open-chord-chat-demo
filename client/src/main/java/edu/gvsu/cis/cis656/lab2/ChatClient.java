@@ -103,18 +103,14 @@ public class ChatClient
 			// likely be wrong, and it almost definitely won't be an external IP
 			// it gets fixed at the server
 			RegistrationInfo userInfo = new RegistrationInfo(userName, messageListener.getInetAddress().getHostAddress(), messageListener.getLocalPort(), true);
-			messageListener.setRegistrationInfo(userInfo);
-
+			
 			// register with the presence service
 			if(!presenceService.register(userInfo))
 			{
 				System.err.println("Sorry, the name `" + userName + "' is taken.");
 				System.exit(1);
 			}
-
-			// start the message listener
-			new Thread(messageListener).start();
-
+			
 			// set up JLine console reader
 			ConsoleReader consoleReader = null;
 			try
@@ -163,6 +159,10 @@ public class ChatClient
 			}
 			System.out.println();
 
+			// start the message listener
+			messageListener.setConsoleReader(consoleReader);
+			new Thread(messageListener).start();
+
 			// enter command loop
 			Scanner scanner;
 			Pattern zeroBytePattern = Pattern.compile("\\z");
@@ -171,8 +171,6 @@ public class ChatClient
 				// print prompt
 				String line = consoleReader.readLine(userName + ':' + (userInfo.getStatus() ? "available" : "busy") + "> ");
 				scanner = new Scanner(line);
-				// System.out.print(userName + ':' + (regInfo.getStatus() ?
-				// "available" : "busy") + "> ");
 
 				// grab command with default delimiter Character.isWhitespace()
 				Command command = commands.get(scanner.next());
