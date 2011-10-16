@@ -11,7 +11,7 @@ import edu.gvsu.cis.cis656.lab2.RegistrationInfo;
 public class FriendCompletor implements Completor
 {
 	PresenceService presenceService;
-	
+
 	public FriendCompletor(PresenceService presenceService)
 	{
 		this.presenceService = presenceService;
@@ -38,7 +38,7 @@ public class FriendCompletor implements Completor
 		Collections.sort(clist);
 
 		// the rest is ripped from JLine's SimpleCompletor implementation
-		
+
 		// put a space after the completion if this is the only completion
 		if(clist.size() == 1)
 			clist.set(0, ((String) clist.get(0)) + " ");

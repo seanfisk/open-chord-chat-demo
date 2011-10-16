@@ -13,7 +13,7 @@ public abstract class Command
 	protected String description;
 	protected PresenceService presenceService;
 	protected RegistrationInfo regInfo;
-	
+
 	public Command(String name, String argFormat, String description, PresenceService presenceService, RegistrationInfo regInfo)
 	{
 		this.name = name;
@@ -22,7 +22,7 @@ public abstract class Command
 		this.presenceService = presenceService;
 		this.regInfo = regInfo;
 	}
-	
+
 	public abstract void execute(String args) throws RemoteException;
 
 	/**
@@ -34,7 +34,8 @@ public abstract class Command
 	}
 
 	/**
-	 * @param name the name to set
+	 * @param name
+	 *            the name to set
 	 */
 	public void setName(String name)
 	{
@@ -50,7 +51,8 @@ public abstract class Command
 	}
 
 	/**
-	 * @param argFormat the argFormat to set
+	 * @param argFormat
+	 *            the argFormat to set
 	 */
 	public void setArgFormat(String argFormat)
 	{
@@ -66,7 +68,8 @@ public abstract class Command
 	}
 
 	/**
-	 * @param description the description to set
+	 * @param description
+	 *            the description to set
 	 */
 	public void setDescription(String description)
 	{
@@ -82,7 +85,8 @@ public abstract class Command
 	}
 
 	/**
-	 * @param presenceService the presenceService to set
+	 * @param presenceService
+	 *            the presenceService to set
 	 */
 	public void setPresenceService(PresenceService presenceService)
 	{
@@ -98,7 +102,8 @@ public abstract class Command
 	}
 
 	/**
-	 * @param regInfo the regInfo to set
+	 * @param regInfo
+	 *            the regInfo to set
 	 */
 	public void setRegInfo(RegistrationInfo regInfo)
 	{

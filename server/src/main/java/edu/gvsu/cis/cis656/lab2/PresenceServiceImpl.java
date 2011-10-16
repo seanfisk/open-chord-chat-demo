@@ -88,7 +88,7 @@ public class PresenceServiceImpl implements PresenceService
 		try
 		{
 			PresenceService presenceService = new PresenceServiceImpl();
-			PresenceService stub = (PresenceService)UnicastRemoteObject.exportObject(presenceService, 0);
+			PresenceService stub = (PresenceService) UnicastRemoteObject.exportObject(presenceService, 0);
 
 			Registry registry;
 			if(args.length == 1)

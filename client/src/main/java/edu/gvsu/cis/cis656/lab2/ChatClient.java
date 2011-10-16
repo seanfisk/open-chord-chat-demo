@@ -143,15 +143,7 @@ public class ChatClient
 			consoleReader.addCompletor(globalCompletor);
 
 			// add available commands
-			Command[] commandList =
-			{
-					new FriendsCommand(presenceService, regInfo),
-					new TalkCommand(presenceService, regInfo),					
-					new BroadcastCommand(presenceService, regInfo),
-					new BusyCommand(presenceService, regInfo),
-					new AvailableCommand(presenceService, regInfo),
-					new ExitCommand(presenceService, regInfo)
-			};
+			Command[] commandList = {new FriendsCommand(presenceService, regInfo), new TalkCommand(presenceService, regInfo), new BroadcastCommand(presenceService, regInfo), new BusyCommand(presenceService, regInfo), new AvailableCommand(presenceService, regInfo), new ExitCommand(presenceService, regInfo)};
 			LinkedHashMap<String, Command> commands = new LinkedHashMap<String, Command>();
 			for(Command command : commandList)
 				commands.put(command.getName(), command);
