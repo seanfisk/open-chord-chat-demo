@@ -22,7 +22,8 @@ public class FriendsCommand extends Command
 			System.out.print('-');
 		System.out.println('\n');
 		for(RegistrationInfo reg : presenceService.listRegisteredUsers())
-			System.console().printf(TWO_COLUMN_FORMAT, reg.getStatus() ? "available" : "busy", reg.getUserName() + (regInfo.getUserName().equals(reg.getUserName()) ? " (You)" : ""));
+			if(!regInfo.getUserName().equals(reg.getUserName()))
+				System.console().printf(TWO_COLUMN_FORMAT, reg.getStatus() ? "available" : "busy", reg.getUserName());
 		System.out.println();
 	}
 }
