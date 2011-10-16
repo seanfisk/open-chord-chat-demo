@@ -15,7 +15,9 @@ import java.rmi.registry.Registry;
 import java.util.LinkedHashMap;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
-import jline.*;
+
+import jline.ConsoleReader;
+import jline.ConsoleReaderInputStream;
 
 /**
  * @author Sean Fisk <fiskse@mail.gvsu.edu>
@@ -84,14 +86,14 @@ public class ChatClient
 			// just supply them)
 			Registry registry;
 			if(host != null && port != 0)
-				registry = LocateRegistry.getRegistry(host, port);				
+				registry = LocateRegistry.getRegistry(host, port);
 			else if(host != null)
 				registry = LocateRegistry.getRegistry(host);
 			else
 				registry = LocateRegistry.getRegistry();
 
 			// get the handle to the presence service
-			presenceService = (PresenceService)registry.lookup("PresenceService");
+			presenceService = (PresenceService) registry.lookup("PresenceService");
 
 			// bind the server socket behind the message listener
 			MessageListener messageListener = new MessageListener();
@@ -134,8 +136,20 @@ public class ChatClient
 			System.out.println();
 
 			// enter command loop
-			Scanner scanner = new Scanner(System.in);
-			ConsoleReader consoleReader = new ConsoleReader();
+			ConsoleReader consoleReader = null;
+			try
+			{
+				consoleReader = new ConsoleReader();
+			}
+			catch(IOException e)
+			{
+				System.err.println("Error creating the JLine console reader.");
+				e.printStackTrace();
+				System.exit(1);
+			}
+
+			ConsoleReaderInputStream consoleReaderStream = new ConsoleReaderInputStream(consoleReader);
+			Scanner scanner = new Scanner(consoleReaderStream);
 
 			while(true)
 			{
