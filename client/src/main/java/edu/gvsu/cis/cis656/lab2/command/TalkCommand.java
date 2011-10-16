@@ -3,7 +3,6 @@ package edu.gvsu.cis.cis656.lab2.command;
 import java.rmi.RemoteException;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
-import java.util.regex.Pattern;
 
 import edu.gvsu.cis.cis656.lab2.PresenceService;
 import edu.gvsu.cis.cis656.lab2.RegistrationInfo;
