@@ -10,6 +10,7 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.LinkedHashMap;
+import java.util.NoSuchElementException;
 import java.util.Scanner;
 import java.util.regex.Pattern;
 
@@ -173,7 +174,18 @@ public class ChatClient
 				scanner = new Scanner(line);
 
 				// grab command with default delimiter Character.isWhitespace()
-				Command command = commands.get(scanner.next());
+				String commandString;
+				try
+				{
+					commandString = scanner.next();
+				}
+				catch(NoSuchElementException e)
+				{
+					// They didn't enter anything
+					continue;
+				}
+				
+				Command command = commands.get(commandString);
 
 				// check invalid
 				if(command == null)
