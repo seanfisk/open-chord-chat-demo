@@ -172,32 +172,56 @@ public class ChatClient
 			{
 				// print prompt
 				String line = consoleReader.readLine(PromptBuilder.buildPrompt(userInfo));
-				scanner = new Scanner(line);
 
-				// grab command with default delimiter Character.isWhitespace()
-				String commandString;
-				try
+				Command command;
+				String commandArgs;
+
+				// they entered something
+				if(line != null)
 				{
-					commandString = scanner.next();
+					scanner = new Scanner(line);
+
+					// grab command with default delimiter
+					// Character.isWhitespace()
+					String commandString;
+					try
+					{
+						commandString = scanner.next();
+					}
+					catch(NoSuchElementException e)
+					{
+						// They didn't enter anything
+						continue;
+					}
+
+					command = commands.get(commandString);
+
+					// check invalid
+					if(command == null)
+					{
+						System.err.println("Invalid command.");
+						continue;
+					}
+
+					// execute command
+					scanner.useDelimiter(zeroBytePattern);
+					commandArgs = scanner.hasNext() ? scanner.next() : null;
 				}
-				catch(NoSuchElementException e)
+				// they pressed Ctrl-D or equivalent, they want to quit
+				else
 				{
-					// They didn't enter anything
-					continue;
+					// get exit command name
+					String exitCommandName = simpleCommands[simpleCommands.length - 1];
+
+					// they didn't press enter, print "exit" and a new line
+					System.out.println(exitCommandName);
+
+					// actually quit, without parsing anything
+					command = commands.get(exitCommandName);
+					commandArgs = null;
 				}
-
-				Command command = commands.get(commandString);
-
-				// check invalid
-				if(command == null)
-				{
-					System.err.println("Invalid command.");
-					continue;
-				}
-
-				// execute command
-				scanner.useDelimiter(zeroBytePattern);
-				command.execute(scanner.hasNext() ? scanner.next() : null);
+				
+				command.execute(commandArgs);
 
 				// exit on exit command (cannot `break' in a class)
 				if(command instanceof ExitCommand)
