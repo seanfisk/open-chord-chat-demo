@@ -73,12 +73,5 @@ define 'talk-chord' do
   main_class = 'edu.gvsu.cis.cis656.lab2.ChatClient'
   manifest['Main-Class'] = main_class
   
-  run.using :main => [main_class, Faker::Name.first_name, "#{host}:#{port}"]
-  
-  desc 'Run the client jar'
-  task 'run-jar' => ['package'] do
-    sh "java \
--jar '#{package}' \
-#{Faker::Name.first_name} #{host}:#{port}"
-  end
+  run.using :main => [main_class, '-master', Faker::Name.first_name, "#{host}:#{port}"]
 end
