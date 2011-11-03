@@ -74,7 +74,7 @@ public class ChatClient
 		try
 		{
 			// construct presence service
-			PresenceService presenceService = new PresenceService(true, host, port);
+			PresenceService presenceService = new PresenceServiceImpl(true, host, port);
 
 			// bind the server socket behind the message listener
 			MessageListener messageListener = new MessageListener();
@@ -205,11 +205,6 @@ public class ChatClient
 		catch(ServiceException e)
 		{
 			System.err.println("OpenChord error.");
-			e.printStackTrace();
-			System.exit(1);
-		}
-		catch(NotBoundException e)
-		{
 			e.printStackTrace();
 			System.exit(1);
 		}
