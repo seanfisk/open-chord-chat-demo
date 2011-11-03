@@ -27,7 +27,7 @@ define 'talk-chord' do
   jline_unzipped_dir = unzip(path_to(:target) => jline_zip)
   
   ## get jline jar file
-  jline_jar = file("#{jline_unzipped_dir}/#{JLINE_FILE}.jar" => jline_unzipped_dir)
+  jline_jar = file("#{jline_unzipped_dir}/#{JLINE_FILE}/#{JLINE_FILE}.jar" => jline_unzipped_dir)
   
   ## create jline artifact
   jline = artifact(JLINE).from(jline_jar)
