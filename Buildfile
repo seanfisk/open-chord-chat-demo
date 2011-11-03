@@ -61,10 +61,10 @@ define 'talk-chord' do
   # dependencies - jewelcli - from maven central
   repositories.remote << 'http://repo1.maven.org/maven2/'
   
-  JEWELCLI = 'com.lexicalscope.jewelcli:jewelcli:jar:0.7.5'
+  JCOMMANDER = 'com.beust:jcommander:jar:1.17'
   
   # compilation
-  compile.with JLINE, OPENCHORD, JEWELCLI
+  compile.with JLINE, OPENCHORD, JCOMMANDER
   
   # packaging into a jar
   package :jar
