@@ -13,6 +13,6 @@ public class ExitCommand extends Command
 
 	public void execute(String args) throws ServiceException
 	{
-		presenceService.unregister(userInfo.getUserName());
+		presenceService.unregister(userInfo);
 	}
 }

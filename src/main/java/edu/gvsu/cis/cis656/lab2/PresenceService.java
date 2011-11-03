@@ -55,5 +55,5 @@ public interface PresenceService
 	 * terminate in order to make sure the keys they maintain are passed to
 	 * their successor in the Chord ring.
 	 */
-	void leave();
+	void leave() throws ServiceException;
 }

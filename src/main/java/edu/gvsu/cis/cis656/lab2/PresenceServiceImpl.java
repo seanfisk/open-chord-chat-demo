@@ -90,8 +90,8 @@ public class PresenceServiceImpl implements PresenceService
 		return chord.retrieve(new StringKey(name));
 	}
 
-	@Override public void leave()
+	@Override public void leave() throws ServiceException
 	{
-		chord.leave();	
+		chord.leave();
 	}
 }

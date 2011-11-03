@@ -14,8 +14,12 @@ public abstract class AvailabilityCommand extends Command
 	protected void setAvailability(boolean available) throws ServiceException
 	{
 		if(available == userInfo.getStatus())
+		{
 			System.out.println("Note: You are already " + (available ? "available" : "busy") + ".");
+			return;
+		}
+		presenceService.unregister(userInfo);
 		userInfo.setStatus(available);
-		presenceService.updateRegistrationInfo(userInfo);
+		presenceService.register(userInfo);
 	}
 }

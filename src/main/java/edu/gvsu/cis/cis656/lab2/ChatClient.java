@@ -4,8 +4,6 @@
 package edu.gvsu.cis.cis656.lab2;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.rmi.NotBoundException;
 import java.util.LinkedHashMap;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
@@ -13,11 +11,7 @@ import java.util.regex.Pattern;
 
 import jline.ConsoleReader;
 import jline.SimpleCompletor;
-import de.uniba.wiai.lspi.chord.data.URL;
-import de.uniba.wiai.lspi.chord.service.Chord;
-import de.uniba.wiai.lspi.chord.service.PropertiesLoader;
 import de.uniba.wiai.lspi.chord.service.ServiceException;
-import de.uniba.wiai.lspi.chord.service.impl.ChordImpl;
 import edu.gvsu.cis.cis656.lab2.command.AvailableCommand;
 import edu.gvsu.cis.cis656.lab2.command.BusyCommand;
 import edu.gvsu.cis.cis656.lab2.command.Command;
@@ -74,7 +68,7 @@ public class ChatClient
 		try
 		{
 			// construct presence service
-			PresenceService presenceService = new PresenceService(true, host, port);
+			PresenceService presenceService = new PresenceServiceImpl(true, host, port);
 
 			// bind the server socket behind the message listener
 			MessageListener messageListener = new MessageListener();
@@ -205,11 +199,6 @@ public class ChatClient
 		catch(ServiceException e)
 		{
 			System.err.println("OpenChord error.");
-			e.printStackTrace();
-			System.exit(1);
-		}
-		catch(NotBoundException e)
-		{
 			e.printStackTrace();
 			System.exit(1);
 		}
