@@ -11,32 +11,31 @@ define 'talk-chord' do
   manifest['Copyright'] = 'Sean Fisk (C) 2011'
   compile.options.target = '1.6'
   
+  # dependencies - openchord
+  ## openchord constants
+  OPENCHORD_VERSION = '1.0.5'
+  OPENCHORD = "openchord:openchord:jar:#{OPENCHORD_VERSION}"
+  OPENCHORD_FILE = "open-chord_#{OPENCHORD_VERSION}"
+  OPENCHORD_URL = "http://sourceforge.net/projects/open-chord/files/Open%20Chord%201.0/#{OPENCHORD_VERSION}/#{OPENCHORD_FILE}.zip/download"
+  
+  ## download openchord from sourceforge
+  openchord_zip = download("#{path_to(:target)}/#{OPENCHORD_FILE}.zip" => OPENCHORD_URL)
+  
+  ## extract openchord to target
+  openchord_unzipped_dir = unzip(path_to(:target, OPENCHORD_FILE) => openchord_zip)
+  
+  ## get openchord jar file
+  OPENCHORD_FILE.gsub!('-', '') # yay for consistent naming
+  openchord_jar = file("#{openchord_unzipped_dir}/dist/#{OPENCHORD_FILE}.jar" => openchord_unzipped_dir)
+  
+  ## create openchord artifact
+  openchord = artifact(OPENCHORD).from(openchord_jar)
+  
+  ## install to maven repository
+  install openchord
+  
   desc 'Common files'
   define 'common' do
-    
-    # dependencies - OpenChord
-    ## OpenChord constants
-    OPENCHORD_VERSION = '1.0.5'
-    OPENCHORD = "openchord:openchord:jar:#{OPENCHORD_VERSION}"
-    OPENCHORD_FILE = "open-chord_#{OPENCHORD_VERSION}"
-    OPENCHORD_URL = "http://sourceforge.net/projects/open-chord/files/Open%20Chord%201.0/#{OPENCHORD_VERSION}/#{OPENCHORD_FILE}.zip/download"
-    
-    ## download jline from sourceforge
-    openchord_zip = download("#{path_to(:target)}/#{OPENCHORD_FILE}.zip" => OPENCHORD_URL)
-    
-    ## extract jline to target
-    openchord_unzipped_dir = unzip(path_to(:target, OPENCHORD_FILE) => openchord_zip)
-    
-    ## get jline jar file
-    OPENCHORD_FILE.gsub!('-', '') # yay for consistent naming
-    openchord_jar = file("#{openchord_unzipped_dir}/dist/#{OPENCHORD_FILE}.jar" => openchord_unzipped_dir)
-    
-    ## create openchord artifact
-    openchord = artifact(OPENCHORD).from(openchord_jar)
-    
-    ## install to maven repository
-    install openchord
-    
     compile.with OPENCHORD
     
     package :jar
@@ -47,7 +46,7 @@ define 'talk-chord' do
     main_class = 'edu.gvsu.cis.cis656.lab2.PresenceServiceImpl'
     java_security_policy = "#{project.base_dir}/security.policy"
     
-    compile.with project('common')
+    compile.with project('common'), OPENCHORD
     manifest['Main-Class'] = main_class
     package(:jar).merge(project('common'))
     
@@ -93,7 +92,7 @@ define 'talk-chord' do
     ## install to maven repository
     install jline
     
-    compile.with project('common'), JLINE
+    compile.with project('common'), JLINE, OPENCHORD
     manifest['Main-Class'] = main_class
     package(:jar).merge(project('common'))
     

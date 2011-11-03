@@ -1,9 +1,9 @@
 package edu.gvsu.cis.cis656.lab2.command;
 
-import java.rmi.RemoteException;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
+import de.uniba.wiai.lspi.chord.service.ServiceException;
 import edu.gvsu.cis.cis656.lab2.PresenceService;
 import edu.gvsu.cis.cis656.lab2.RegistrationInfo;
 
@@ -15,7 +15,7 @@ public class TalkCommand extends TalkingCommand
 		super("talk", "{username} {message}", "send a message to another user", presenceService, userInfo);
 	}
 
-	public void execute(String args) throws RemoteException
+	public void execute(String args) throws ServiceException
 	{
 		if(args == null)
 		{

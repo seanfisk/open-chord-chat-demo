@@ -1,7 +1,6 @@
 package edu.gvsu.cis.cis656.lab2.command;
 
-import java.rmi.RemoteException;
-
+import de.uniba.wiai.lspi.chord.service.ServiceException;
 import edu.gvsu.cis.cis656.lab2.PresenceService;
 import edu.gvsu.cis.cis656.lab2.RegistrationInfo;
 
@@ -23,7 +22,7 @@ public abstract class Command
 		this.userInfo = userInfo;
 	}
 
-	public abstract void execute(String args) throws RemoteException;
+	public abstract void execute(String args) throws ServiceException;
 
 	/**
 	 * @return the name

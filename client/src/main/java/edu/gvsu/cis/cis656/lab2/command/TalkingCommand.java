@@ -6,9 +6,9 @@ package edu.gvsu.cis.cis656.lab2.command;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.rmi.RemoteException;
 import java.rmi.UnknownHostException;
 
+import de.uniba.wiai.lspi.chord.service.ServiceException;
 import edu.gvsu.cis.cis656.lab2.PresenceService;
 import edu.gvsu.cis.cis656.lab2.RegistrationInfo;
 import edu.gvsu.cis.cis656.lab2.util.PromptBuilder;
@@ -20,7 +20,7 @@ public abstract class TalkingCommand extends Command
 		super(name, argFormat, description, presenceService, userInfo);
 	}
 
-	protected void sendMessageToUser(String recipient, String message) throws RemoteException
+	protected void sendMessageToUser(String recipient, String message) throws ServiceException
 	{
 		RegistrationInfo recipientInfo = presenceService.lookup(recipient);
 

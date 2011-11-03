@@ -5,13 +5,13 @@ package edu.gvsu.cis.cis656.lab2;
  * Title: Lab2
  * </p>
  * <p>
- * Description: Old School Instant Messaging Application
+ * Description: Registration record for the Chord Chat System
  * </p>
  * 
  * @author Jonathan Engelsma
  * @version 1.0
  */
-import java.io.*;
+import java.io.Serializable;
 
 /**
  * This class represents the information that the chat client registers with the
@@ -19,7 +19,7 @@ import java.io.*;
  */
 public class RegistrationInfo implements Serializable
 {
-	private static final long serialVersionUID = -1692519871343236571L;
+	private static final long serialVersionUID = 2144157610883535152L;
 	private String userName;
 	private String host;
 	private boolean status;
@@ -35,7 +35,8 @@ public class RegistrationInfo implements Serializable
 	 * @param p
 	 *            The port # their client is listening for connections on.
 	 * @param s
-	 *            The status, true if the client is available, false otherwise.
+	 *            The status, true if the client is available to host a game,
+	 *            false otherwise.
 	 */
 	public RegistrationInfo(String uname, String h, int p, boolean s)
 	{
@@ -122,4 +123,35 @@ public class RegistrationInfo implements Serializable
 		this.port = port;
 	}
 
+	/**
+	 * Chord requires stored data items to override the default hashCode()
+	 * method. Leave this here or you will have problems! See OpenChord manual
+	 * for details.
+	 */
+	public int hashCode()
+	{
+		return this.toString().intern().hashCode();
+	}
+
+	/**
+	 * Chord requires stored data items to override the default equals() method.
+	 * Leave this here or you will have problems! See OpenChord manual for
+	 * details.
+	 */
+	public boolean equals(Object o)
+	{
+		if(o instanceof RegistrationInfo)
+		{
+			return ((RegistrationInfo) o).toString().equals(this.toString());
+		}
+		return false;
+	}
+
+	/**
+	 * hashCode() and equals() use this. Don't touch it!
+	 */
+	public String toString()
+	{
+		return this.userName + "@" + this.host + ":" + this.port;
+	}
 }

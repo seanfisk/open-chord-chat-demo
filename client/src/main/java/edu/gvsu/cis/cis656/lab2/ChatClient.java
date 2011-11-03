@@ -4,30 +4,25 @@
 package edu.gvsu.cis.cis656.lab2;
 
 import java.io.IOException;
-import java.rmi.AccessException;
+import java.net.MalformedURLException;
 import java.rmi.NotBoundException;
-import java.rmi.RemoteException;
-import java.rmi.registry.LocateRegistry;
-import java.rmi.registry.Registry;
 import java.util.LinkedHashMap;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 import java.util.regex.Pattern;
 
-import jline.ArgumentCompletor;
-import jline.Completor;
 import jline.ConsoleReader;
-import jline.MultiCompletor;
-import jline.NullCompletor;
 import jline.SimpleCompletor;
+import de.uniba.wiai.lspi.chord.data.URL;
+import de.uniba.wiai.lspi.chord.service.Chord;
+import de.uniba.wiai.lspi.chord.service.PropertiesLoader;
+import de.uniba.wiai.lspi.chord.service.ServiceException;
+import de.uniba.wiai.lspi.chord.service.impl.ChordImpl;
 import edu.gvsu.cis.cis656.lab2.command.AvailableCommand;
-import edu.gvsu.cis.cis656.lab2.command.BroadcastCommand;
 import edu.gvsu.cis.cis656.lab2.command.BusyCommand;
 import edu.gvsu.cis.cis656.lab2.command.Command;
 import edu.gvsu.cis.cis656.lab2.command.ExitCommand;
-import edu.gvsu.cis.cis656.lab2.command.FriendsCommand;
 import edu.gvsu.cis.cis656.lab2.command.TalkCommand;
-import edu.gvsu.cis.cis656.lab2.completor.FriendCompletor;
 import edu.gvsu.cis.cis656.lab2.util.PromptBuilder;
 
 /**
@@ -76,25 +71,10 @@ public class ChatClient
 			}
 		}
 
-		// set up security manager if it doesn't exist
-		if(System.getSecurityManager() == null)
-			System.setSecurityManager(new SecurityManager());
-
 		try
 		{
-			// get registry
-			// make absolutely sure we always get the JVM defaults (and don't
-			// just supply them)
-			Registry registry;
-			if(host != null && port != 0)
-				registry = LocateRegistry.getRegistry(host, port);
-			else if(host != null)
-				registry = LocateRegistry.getRegistry(host);
-			else
-				registry = LocateRegistry.getRegistry();
-
-			// get the handle to the presence service
-			PresenceService presenceService = (PresenceService) registry.lookup("PresenceService");
+			// construct presence service
+			PresenceService presenceService = new PresenceService(true, host, port);
 
 			// bind the server socket behind the message listener
 			MessageListener messageListener = new MessageListener();
@@ -107,11 +87,7 @@ public class ChatClient
 			RegistrationInfo userInfo = new RegistrationInfo(userName, messageListener.getInetAddress().getHostAddress(), messageListener.getLocalPort(), true);
 
 			// register with the presence service
-			if(!presenceService.register(userInfo))
-			{
-				System.err.println("Sorry, the name `" + userName + "' is taken.");
-				System.exit(1);
-			}
+			presenceService.register(userInfo);
 
 			// set up JLine console reader
 			ConsoleReader consoleReader = null;
@@ -131,17 +107,12 @@ public class ChatClient
 			consoleReader.setUseHistory(true);
 			consoleReader.setUsePagination(true);
 
-			String[] simpleCommands = {"friends", "broadcast", "busy", "available", "exit"};
+			String[] simpleCommands = {"talk", "busy", "available", "exit"};
 			SimpleCompletor simpleCommandsCompletor = new SimpleCompletor(simpleCommands);
-			SimpleCompletor talkCommandPrefixCompletor = new SimpleCompletor("talk");
-			FriendCompletor talkCommandFriendCompletor = new FriendCompletor(presenceService, userInfo);
-			Completor[] talkCommandArguments = {talkCommandPrefixCompletor, talkCommandFriendCompletor, new NullCompletor()};
-			ArgumentCompletor talkCommandCompletor = new ArgumentCompletor(talkCommandArguments);
-			MultiCompletor globalCompletor = new MultiCompletor(new Completor[] {simpleCommandsCompletor, talkCommandCompletor});
-			consoleReader.addCompletor(globalCompletor);
+			consoleReader.addCompletor(simpleCommandsCompletor);
 
 			// add available commands
-			Command[] commandList = {new FriendsCommand(presenceService, userInfo), new TalkCommand(presenceService, userInfo), new BroadcastCommand(presenceService, userInfo), new BusyCommand(presenceService, userInfo), new AvailableCommand(presenceService, userInfo), new ExitCommand(presenceService, userInfo)};
+			Command[] commandList = {new TalkCommand(presenceService, userInfo), new BusyCommand(presenceService, userInfo), new AvailableCommand(presenceService, userInfo), new ExitCommand(presenceService, userInfo)};
 			LinkedHashMap<String, Command> commands = new LinkedHashMap<String, Command>();
 			for(Command command : commandList)
 				commands.put(command.getName(), command);
@@ -220,7 +191,7 @@ public class ChatClient
 					command = commands.get(exitCommandName);
 					commandArgs = null;
 				}
-				
+
 				command.execute(commandArgs);
 
 				// exit on exit command (cannot `break' in a class)
@@ -231,15 +202,9 @@ public class ChatClient
 			// close the listening thread
 			messageListener.close();
 		}
-		catch(AccessException e)
+		catch(ServiceException e)
 		{
-			System.err.println("Cannot access RMI resource.");
-			e.printStackTrace();
-			System.exit(1);
-		}
-		catch(RemoteException e)
-		{
-			System.err.println("RMI error.");
+			System.err.println("OpenChord error.");
 			e.printStackTrace();
 			System.exit(1);
 		}
@@ -257,7 +222,7 @@ public class ChatClient
 
 	private static void usage()
 	{
-		System.err.println("Usage: java edu.gvsu.cis.cis656.lab2.ChatClient user [host[:port]]");
+		System.err.println("Usage: java edu.gvsu.cis.cis656.lab2.ChatClient [-master] user [host[:port]]");
 		System.exit(1);
 	}
 }
