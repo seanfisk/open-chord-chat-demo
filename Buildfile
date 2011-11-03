@@ -58,8 +58,13 @@ define 'talk-chord' do
   ## install to maven repository
   install openchord
   
+  # dependencies - jewelcli - from maven central
+  repositories.remote << 'http://repo1.maven.org/maven2/'
+  
+  JEWELCLI = 'com.lexicalscope.jewelcli:jewelcli:jar:0.7.5'
+  
   # compilation
-  compile.with JLINE, OPENCHORD
+  compile.with JLINE, OPENCHORD, JEWELCLI
   
   # packaging into a jar
   package :jar
