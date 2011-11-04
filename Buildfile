@@ -12,59 +12,68 @@ define 'talk-chord' do
   project.group = 'gvsu'
   manifest['Copyright'] = 'Sean Fisk (C) 2011'
   compile.options.target = '1.6'
+
+  # dependencies
+  ## ibiblio public
+  repositories.remote << 'http://www.ibiblio.org/maven2'
+  ## maven central
+  repositories.remote << 'http://repo1.maven.org/maven2/'
+  ## apache
+  repositories.remote << 'http://ftp.cica.es/mirrors/maven2/'
   
-  # dependencies - jline
-  ## jline constants
+  ## jcommander
+  JCOMMANDER = transitive('com.beust:jcommander:jar:1.17')
+  
+  ## jline
+  ### constants
   JLINE_VERSION = '1.0'
   JLINE = "jline:jline:jar:#{JLINE_VERSION}"
   JLINE_FILE = "jline-#{JLINE_VERSION}"
   JLINE_URL = "http://sourceforge.net/projects/jline/files/jline/#{JLINE_VERSION}/#{JLINE_FILE}.zip/download"
   
-  ## download jline from sourceforge
+  ### download from sourceforge
   jline_zip = download("#{path_to(:target)}/#{JLINE_FILE}.zip" => JLINE_URL)
   
-  ## extract jline to target
+  ## extract to target directory
   jline_unzipped_dir = unzip(path_to(:target) => jline_zip)
   
-  ## get jline jar file
+  ## get jar file
   jline_jar = file("#{jline_unzipped_dir}/#{JLINE_FILE}/#{JLINE_FILE}.jar" => jline_unzipped_dir)
   
-  ## create jline artifact
+  ## create artifact
   jline = artifact(JLINE).from(jline_jar)
   
-  ## install to maven repository
+  ## install to local maven repository
   install jline
+
+  ## log4j - openchord dependency
+  LOG4J = 'log4j:log4j:jar:1.2.15'
   
-  # dependencies - openchord
-  ## openchord constants
+  ## openchord
+  ### constants
   OPENCHORD_VERSION = '1.0.5'
   OPENCHORD = "openchord:openchord:jar:#{OPENCHORD_VERSION}"
   OPENCHORD_FILE = "open-chord_#{OPENCHORD_VERSION}"
   OPENCHORD_URL = "http://sourceforge.net/projects/open-chord/files/Open%20Chord%201.0/#{OPENCHORD_VERSION}/#{OPENCHORD_FILE}.zip/download"
   
-  ## download openchord from sourceforge
+  ## download from sourceforge
   openchord_zip = download("#{path_to(:target)}/#{OPENCHORD_FILE}.zip" => OPENCHORD_URL)
   
-  ## extract openchord to target
+  ## extract to target directory
   openchord_unzipped_dir = unzip(path_to(:target, OPENCHORD_FILE) => openchord_zip)
   
-  ## get openchord jar file
+  ## get jar file
   OPENCHORD_FILE.gsub!('-', '') # yay for consistent naming
   openchord_jar = file("#{openchord_unzipped_dir}/dist/#{OPENCHORD_FILE}.jar" => openchord_unzipped_dir)
   
-  ## create openchord artifact
+  ## create artifact
   openchord = artifact(OPENCHORD).from(openchord_jar)
   
-  ## install to maven repository
+  ## install to local maven repository
   install openchord
   
-  # dependencies - jewelcli - from maven central
-  repositories.remote << 'http://repo1.maven.org/maven2/'
-  
-  JCOMMANDER = 'com.beust:jcommander:jar:1.17'
-  
   # compilation
-  compile.with JLINE, OPENCHORD, JCOMMANDER
+  compile.with JCOMMANDER, LOG4J, JLINE, OPENCHORD
   
   # packaging into a jar
   package :jar
