@@ -29,7 +29,7 @@ public class PresenceServiceImpl implements PresenceService
 	public PresenceServiceImpl(boolean isMaster, String host, int port)
 	{
 		super();
-		
+
 		// load properties
 		PropertiesLoader.loadPropertyFile();
 

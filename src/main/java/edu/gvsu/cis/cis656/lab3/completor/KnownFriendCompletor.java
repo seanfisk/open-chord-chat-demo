@@ -19,7 +19,9 @@ public class KnownFriendCompletor implements Completor
 		this.userInfo = userInfo;
 	}
 
-	@SuppressWarnings("unchecked") @Override public int complete(String buffer, int cursor, @SuppressWarnings("rawtypes") List clist)
+	@SuppressWarnings("unchecked")
+	@Override
+	public int complete(String buffer, int cursor, @SuppressWarnings("rawtypes") List clist)
 	{
 		String start = (buffer == null) ? "" : buffer;
 		try
@@ -29,7 +31,8 @@ public class KnownFriendCompletor implements Completor
 				// only list them if they are available
 				if(otherUserName.startsWith(start) && !userInfo.getUserName().equals(otherUserName))
 				{
-					// if these requirements are satisfied, check to see if they are available
+					// if these requirements are satisfied, check to see if they
+					// are available
 					// if so, add them to the completions list
 					RegistrationInfo otherUserInfo = presenceService.lookup(otherUserName);
 					if(otherUserInfo.getStatus())

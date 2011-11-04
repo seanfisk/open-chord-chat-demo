@@ -66,18 +66,19 @@ public interface PresenceService
 	 * their successor in the Chord ring.
 	 */
 	void leave() throws ServiceException;
-	
+
 	/**
 	 * Get the list of known friends at this time.
 	 * 
 	 * @return The list of know friends.
 	 */
 	Set<String> getKnownFriends();
-	
+
 	/**
 	 * Set the list of known friends at this time.
 	 * 
-	 * @param knownFriends The new list of know friends.
+	 * @param knownFriends
+	 *            The new list of know friends.
 	 */
 	void setKnownFriends(Set<String> knownFriends);
 }

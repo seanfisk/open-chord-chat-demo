@@ -1,6 +1,3 @@
-/**
- * 
- */
 package edu.gvsu.cis.cis656.lab3;
 
 import java.io.IOException;
@@ -63,7 +60,7 @@ public class ChatClient
 				usage();
 
 			userName = parameters.get(0);
-			
+
 			presenceService = new PresenceServiceImpl(true, null, masterPort);
 		}
 		else
@@ -75,16 +72,16 @@ public class ChatClient
 			userName = parameters.get(0);
 
 			String hostPort[] = parameters.get(1).split(":", 2);
-			
+
 			if(hostPort.length != 2)
 				usage();
-			
+
 			String host = hostPort[0];
 			String portStr = hostPort[1];
-			
+
 			if(host.isEmpty() || portStr.isEmpty())
 				usage();
-			
+
 			new PortValidator().validate("port", portStr);
 			int port = -1;
 			try
@@ -136,8 +133,8 @@ public class ChatClient
 
 			// simple commands
 			LinkedHashMap<String, Command> commands = new LinkedHashMap<String, Command>();
-			/// for some reason, there isn't a default constructor
-			SimpleCompletor simpleCommandCompletor = new SimpleCompletor(new String[]{});
+			// for some reason, there isn't a default constructor
+			SimpleCompletor simpleCommandCompletor = new SimpleCompletor(new String[] {});
 			ExitCommand exitCommand = new ExitCommand(presenceService, userInfo);
 			Command[] simpleCommandList = {new BusyCommand(presenceService, userInfo), new AvailableCommand(presenceService, userInfo), exitCommand};
 			for(Command command : simpleCommandList)
@@ -146,11 +143,11 @@ public class ChatClient
 				simpleCommandCompletor.addCandidateString(command.getName());
 				commands.put(command.getName(), command);
 			}
-			
+
 			// talk command
 			TalkCommand talkCommand = new TalkCommand(presenceService, userInfo);
 			commands.put(talkCommand.getName(), talkCommand);
-			
+
 			SimpleCompletor talkCommandPrefixCompletor = new SimpleCompletor(talkCommand.getName());
 			KnownFriendCompletor talkCommandKnownFriendCompletor = new KnownFriendCompletor(presenceService, userInfo);
 			Completor[] talkCommandArguments = {talkCommandPrefixCompletor, talkCommandKnownFriendCompletor, new NullCompletor()};

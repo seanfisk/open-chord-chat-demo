@@ -63,7 +63,8 @@ public class MessageListener implements Runnable
 	 * (non-Javadoc)
 	 * @see java.lang.Runnable#run()
 	 */
-	@Override public void run()
+	@Override
+	public void run()
 	{
 		try
 		{
