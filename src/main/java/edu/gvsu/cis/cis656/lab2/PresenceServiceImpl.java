@@ -3,9 +3,11 @@
  */
 package edu.gvsu.cis.cis656.lab2;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.net.InetAddress;
 import java.net.MalformedURLException;
+import java.net.ServerSocket;
 import java.net.UnknownHostException;
 import java.util.Set;
 
@@ -130,12 +132,27 @@ public class PresenceServiceImpl implements PresenceService
 		// join an existing Chord network
 		String protocol = URL.KNOWN_PROTOCOLS.get(URL.SOCKET_PROTOCOL);
 
+		// find a random port to which to bind
+		// we must do this otherwise multiple clients on the same machine (often
+		// used during testing) will collide
+		int localPort;
+		try
+		{
+			ServerSocket server = new ServerSocket(0);
+			localPort = server.getLocalPort();
+			server.close();
+		}
+		catch(IOException e)
+		{
+			throw new RuntimeException("Error while trying to find a free port", e);
+		}
+
 		// local url
 		String localURLStr;
 		URL localURL = null;
 		try
 		{
-			localURLStr = protocol + "://" + InetAddress.getLocalHost().getHostAddress() + '/';
+			localURLStr = protocol + "://" + InetAddress.getLocalHost().getHostAddress() + ':' + localPort + '/';
 		}
 		catch(UnknownHostException e)
 		{
