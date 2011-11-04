@@ -29,9 +29,7 @@ public class MessageListener implements Runnable
 		}
 		catch(IOException e)
 		{
-			System.err.println("Error binding the listening socket.");
-			e.printStackTrace();
-			System.exit(1);
+			throw new RuntimeException("Error binding the listening socket.", e);
 		}
 	}
 
@@ -53,9 +51,7 @@ public class MessageListener implements Runnable
 		}
 		catch(IOException e)
 		{
-			System.err.println("Error closing the server socket.");
-			e.printStackTrace();
-			System.exit(1);
+			throw new RuntimeException("Error closing the server socket.", e);
 		}
 	}
 
@@ -92,9 +88,7 @@ public class MessageListener implements Runnable
 		}
 		catch(IOException e)
 		{
-			System.err.println("Error in receiving messages.");
-			e.printStackTrace();
-			System.exit(1);
+			throw new RuntimeException("Error in receiving messages.", e);
 		}
 	}
 
