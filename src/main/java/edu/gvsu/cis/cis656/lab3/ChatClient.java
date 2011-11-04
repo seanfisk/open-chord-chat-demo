@@ -10,7 +10,11 @@ import java.util.NoSuchElementException;
 import java.util.Scanner;
 import java.util.regex.Pattern;
 
+import jline.ArgumentCompletor;
+import jline.Completor;
 import jline.ConsoleReader;
+import jline.MultiCompletor;
+import jline.NullCompletor;
 import jline.SimpleCompletor;
 
 import com.beust.jcommander.JCommander;
@@ -23,6 +27,7 @@ import edu.gvsu.cis.cis656.lab3.command.BusyCommand;
 import edu.gvsu.cis.cis656.lab3.command.Command;
 import edu.gvsu.cis.cis656.lab3.command.ExitCommand;
 import edu.gvsu.cis.cis656.lab3.command.TalkCommand;
+import edu.gvsu.cis.cis656.lab3.completor.KnownFriendCompletor;
 import edu.gvsu.cis.cis656.lab3.util.PromptBuilder;
 
 /**
@@ -129,19 +134,29 @@ public class ChatClient
 			consoleReader.setUseHistory(true);
 			consoleReader.setUsePagination(true);
 
-			// add available commands
-			Command[] commandList = {new TalkCommand(presenceService, userInfo), new BusyCommand(presenceService, userInfo), new AvailableCommand(presenceService, userInfo), new ExitCommand(presenceService, userInfo)};
+			// simple commands
 			LinkedHashMap<String, Command> commands = new LinkedHashMap<String, Command>();
-			String[] simpleCommands = new String[commandList.length];
-			int commandIndex = 0;
-			for(Command command : commandList)
+			/// for some reason, there isn't a default constructor
+			SimpleCompletor simpleCommandCompletor = new SimpleCompletor(new String[]{});
+			ExitCommand exitCommand = new ExitCommand(presenceService, userInfo);
+			Command[] simpleCommandList = {new BusyCommand(presenceService, userInfo), new AvailableCommand(presenceService, userInfo), exitCommand};
+			for(Command command : simpleCommandList)
 			{
-				simpleCommands[commandIndex++] = command.getName();
+				System.out.println(command.getName());
+				simpleCommandCompletor.addCandidateString(command.getName());
 				commands.put(command.getName(), command);
 			}
-
-			SimpleCompletor simpleCommandsCompletor = new SimpleCompletor(simpleCommands);
-			consoleReader.addCompletor(simpleCommandsCompletor);
+			
+			// talk command
+			TalkCommand talkCommand = new TalkCommand(presenceService, userInfo);
+			commands.put(talkCommand.getName(), talkCommand);
+			
+			SimpleCompletor talkCommandPrefixCompletor = new SimpleCompletor(talkCommand.getName());
+			KnownFriendCompletor talkCommandKnownFriendCompletor = new KnownFriendCompletor(presenceService, userInfo);
+			Completor[] talkCommandArguments = {talkCommandPrefixCompletor, talkCommandKnownFriendCompletor, new NullCompletor()};
+			ArgumentCompletor talkCommandCompletor = new ArgumentCompletor(talkCommandArguments);
+			MultiCompletor globalCompletor = new MultiCompletor(new Completor[] {simpleCommandCompletor, talkCommandCompletor});
+			consoleReader.addCompletor(globalCompletor);
 
 			// print out command list
 			System.out.println();
@@ -207,14 +222,11 @@ public class ChatClient
 				// they pressed Ctrl-D or equivalent, they want to quit
 				else
 				{
-					// get exit command name
-					String exitCommandName = simpleCommands[simpleCommands.length - 1];
-
 					// they didn't press enter, print "exit" and a new line
-					System.out.println(exitCommandName);
+					System.out.println(exitCommand.getName());
 
 					// actually quit, without parsing anything
-					command = commands.get(exitCommandName);
+					command = commands.get(exitCommand.getName());
 					commandArgs = null;
 				}
 

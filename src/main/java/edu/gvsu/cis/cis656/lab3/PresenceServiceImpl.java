@@ -10,6 +10,7 @@ import java.net.MalformedURLException;
 import java.net.ServerSocket;
 import java.net.UnknownHostException;
 import java.util.Set;
+import java.util.TreeSet;
 
 import de.uniba.wiai.lspi.chord.data.URL;
 import de.uniba.wiai.lspi.chord.service.Chord;
@@ -23,11 +24,12 @@ import de.uniba.wiai.lspi.chord.service.impl.ChordImpl;
 public class PresenceServiceImpl implements PresenceService
 {
 	private Chord chord;
+	private Set<String> knownFriends = new TreeSet<String>();
 
 	public PresenceServiceImpl(boolean isMaster, String host, int port)
 	{
 		super();
-
+		
 		// load properties
 		PropertiesLoader.loadPropertyFile();
 
@@ -189,5 +191,17 @@ public class PresenceServiceImpl implements PresenceService
 		{
 			throw new RuntimeException("Could not join DHT!", e);
 		}
+	}
+
+	@Override
+	public Set<String> getKnownFriends()
+	{
+		return knownFriends;
+	}
+
+	@Override
+	public void setKnownFriends(Set<String> knownFriends)
+	{
+		this.knownFriends = knownFriends;
 	}
 }

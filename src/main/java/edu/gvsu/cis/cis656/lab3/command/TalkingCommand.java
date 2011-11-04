@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.rmi.UnknownHostException;
+import java.util.Set;
 
 import de.uniba.wiai.lspi.chord.service.ServiceException;
 import edu.gvsu.cis.cis656.lab3.PresenceService;
@@ -23,10 +24,12 @@ public abstract class TalkingCommand extends Command
 	protected void sendMessageToUser(String recipient, String message) throws ServiceException
 	{
 		RegistrationInfo recipInfo = presenceService.lookup(recipient);
+		Set<String> knownFriends = presenceService.getKnownFriends();
 
 		if(recipInfo == null)
 		{
 			System.out.println("User `" + recipient + "' isn't registered on this server.");
+			knownFriends.remove(recipInfo);
 			return;
 		}
 
@@ -53,6 +56,7 @@ public abstract class TalkingCommand extends Command
 		{
 			e.printStackTrace();
 		}
+		knownFriends.add(recipient);
 	}
 
 }

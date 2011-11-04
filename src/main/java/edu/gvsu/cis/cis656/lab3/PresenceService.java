@@ -11,6 +11,8 @@ package edu.gvsu.cis.cis656.lab3;
  * @author Jonathan Engelsma
  * @version 1.0
  */
+import java.util.Set;
+
 import de.uniba.wiai.lspi.chord.service.ServiceException;
 
 /**
@@ -21,7 +23,6 @@ import de.uniba.wiai.lspi.chord.service.ServiceException;
  */
 public interface PresenceService
 {
-
 	/**
 	 * Register a client with the presence service.
 	 * 
@@ -65,4 +66,18 @@ public interface PresenceService
 	 * their successor in the Chord ring.
 	 */
 	void leave() throws ServiceException;
+	
+	/**
+	 * Get the list of known friends at this time.
+	 * 
+	 * @return The list of know friends.
+	 */
+	Set<String> getKnownFriends();
+	
+	/**
+	 * Set the list of known friends at this time.
+	 * 
+	 * @param knownFriends The new list of know friends.
+	 */
+	void setKnownFriends(Set<String> knownFriends);
 }
