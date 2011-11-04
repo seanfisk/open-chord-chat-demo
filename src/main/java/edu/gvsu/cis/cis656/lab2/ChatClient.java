@@ -14,10 +14,10 @@ import jline.ConsoleReader;
 import jline.SimpleCompletor;
 
 import com.beust.jcommander.JCommander;
-import com.beust.jcommander.Parameter;
-import com.beust.jcommander.internal.Lists;
 
 import de.uniba.wiai.lspi.chord.service.ServiceException;
+import edu.gvsu.cis.cis656.lab2.cloptions.CommandLineOptions;
+import edu.gvsu.cis.cis656.lab2.cloptions.PortValidator;
 import edu.gvsu.cis.cis656.lab2.command.AvailableCommand;
 import edu.gvsu.cis.cis656.lab2.command.BusyCommand;
 import edu.gvsu.cis.cis656.lab2.command.Command;
@@ -30,81 +30,72 @@ import edu.gvsu.cis.cis656.lab2.util.PromptBuilder;
  */
 public class ChatClient
 {
-	private class CommandLineOptions
-	{
-		@Parameter
-		private List<String> parameters = Lists.newArrayList();
-		
-		@Parameter(names = "-master", description = "Make this client the master node.")
-		private boolean master = true;
-				
-		public List<String> getParameters()
-		{
-			return parameters;
-		}
-		
-		public boolean getMaster()
-		{
-			return master;
-		}
-	}
-	
 	public static void main(String[] args)
 	{
 		new ChatClient().go(args);
 	}
 
-	void go(String[] args)
+	private void go(String[] args)
 	{
 		CommandLineOptions options = new CommandLineOptions();
-		JCommander jcommander = new JCommander(options, args);
+		new JCommander(options, args);
 		List<String> parameters = options.getParameters();
-		
+
 		// check number of args
 		if(parameters.size() < 1 || parameters.size() > 2)
+			usage();
+
+		// parse args and set up presence service
+		String userName;
+		int masterPort = options.getMasterPort();
+		boolean isMaster = (masterPort != -1);
+		PresenceService presenceService;
+
+		if(isMaster)
 		{
-			jcommander.usage();
-			System.exit(1);
+			// master node
+			if(parameters.size() != 1)
+				usage();
+
+			userName = parameters.get(0);
+			
+			presenceService = new PresenceServiceImpl(true, null, masterPort);
 		}
-
-		// parse args
-		String userName = parameters.get(0);
-		String host = null;
-		int port = 0;
-		if(parameters.size() == 2)
+		else
 		{
-			String hostPort[] = parameters.get(1).split(":", 2);
-			if(hostPort.length > 0)
-			{
-				host = hostPort[0];
+			// regular node
+			if(parameters.size() != 2)
+				usage();
 
-				// print usage - must give a host if a port is given
-				if(host.length() == 0)
-				{					
-					jcommander.usage();
-					System.exit(1);
-				}
-			}
-			if(hostPort.length > 1)
+			userName = parameters.get(0);
+
+			String hostPort[] = parameters.get(1).split(":", 2);
+			
+			if(hostPort.length != 2)
+				usage();
+			
+			String host = hostPort[0];
+			String portStr = hostPort[1];
+			
+			if(host.isEmpty() || portStr.isEmpty())
+				usage();
+			
+			new PortValidator().validate("port", portStr);
+			int port = -1;
+			try
 			{
-				try
-				{
-					port = Integer.parseInt(hostPort[1]);
-				}
-				catch(NumberFormatException e) // for Integer.parseInt()
-				{
-					System.err.println("Invalid port number.");
-					e.printStackTrace();
-					System.exit(1);
-				}
+				port = Integer.parseInt(portStr);
 			}
+			catch(NumberFormatException e)
+			{
+				throw new RuntimeException("Invalid port number.", e);
+			}
+
+			presenceService = new PresenceServiceImpl(false, host, port);
 		}
 
 		try
 		{
-			// construct presence service
-			PresenceService presenceService = new PresenceServiceImpl(options.getMaster(), host, port);
-
 			// bind the server socket behind the message listener
 			MessageListener messageListener = new MessageListener();
 
@@ -116,7 +107,11 @@ public class ChatClient
 			RegistrationInfo userInfo = new RegistrationInfo(userName, messageListener.getInetAddress().getHostAddress(), messageListener.getLocalPort(), true);
 
 			// register with the presence service
-			presenceService.register(userInfo);
+			if(!presenceService.register(userInfo))
+			{
+				System.err.println("Sorry, the name `" + userName + "' is taken.");
+				System.exit(1);
+			}
 
 			// set up JLine console reader
 			ConsoleReader consoleReader = null;
@@ -126,9 +121,7 @@ public class ChatClient
 			}
 			catch(IOException e)
 			{
-				System.err.println("Error creating the JLine console reader.");
-				e.printStackTrace();
-				System.exit(1);
+				throw new RuntimeException("Error creating the JLine console reader.", e);
 			}
 
 			// use bell, history, and pagination
@@ -146,7 +139,7 @@ public class ChatClient
 				simpleCommands[commandIndex++] = command.getName();
 				commands.put(command.getName(), command);
 			}
-			
+
 			SimpleCompletor simpleCommandsCompletor = new SimpleCompletor(simpleCommands);
 			consoleReader.addCompletor(simpleCommandsCompletor);
 
@@ -237,20 +230,17 @@ public class ChatClient
 		}
 		catch(ServiceException e)
 		{
-			System.err.println("OpenChord error.");
-			e.printStackTrace();
-			System.exit(1);
+			throw new RuntimeException("OpenChord service error.", e);
 		}
 		catch(IOException e)
 		{
-			System.err.println("Error reading from the console.");
-			e.printStackTrace();
+			throw new RuntimeException("Error reading from the console.", e);
 		}
 	}
 
 	private static void usage()
 	{
-		System.err.println("Usage: java edu.gvsu.cis.cis656.lab2.ChatClient [-master] user [host[:port]]");
+		System.err.println("Usage:\n" + "Start a master node\n" + "java edu.gvsu.cis.cis656.lab2.ChatClient --master port user\n" + "\n" + "Start a regular node\n" + "java edu.gvsu.cis.cis656.lab2.ChatClient user host:port\n");
 		System.exit(1);
 	}
 }

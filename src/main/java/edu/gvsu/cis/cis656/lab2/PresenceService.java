@@ -11,9 +11,6 @@ package edu.gvsu.cis.cis656.lab2;
  * @author Jonathan Engelsma
  * @version 1.0
  */
-import java.io.Serializable;
-import java.util.Set;
-
 import de.uniba.wiai.lspi.chord.service.ServiceException;
 
 /**
@@ -24,22 +21,34 @@ import de.uniba.wiai.lspi.chord.service.ServiceException;
  */
 public interface PresenceService
 {
+
 	/**
 	 * Register a client with the presence service.
 	 * 
 	 * @param reg
 	 *            The information that is to be registered about a client.
+	 * @return Boolean indicating whether the registration was successful.
 	 */
-	void register(RegistrationInfo userInfo) throws ServiceException;
+	boolean register(RegistrationInfo reg) throws ServiceException;
+
+	/**
+	 * Updates the information of a currently registered client.
+	 * 
+	 * @param reg
+	 *            The updated registration info.
+	 * @return true if successful, or false if no user with the given name is
+	 *         registered.
+	 */
+	boolean updateRegistrationInfo(RegistrationInfo reg) throws ServiceException;
 
 	/**
 	 * Unregister a client from the presence service. Client must call this
 	 * method when it terminates execution.
 	 * 
-	 * @param userName
-	 *            The name of the user to be unregistered.
+	 * @param reg
+	 *            The information about a client to be unregistered.
 	 */
-	void unregister(RegistrationInfo userInfo) throws ServiceException;
+	void unregister(RegistrationInfo reg) throws ServiceException;
 
 	/**
 	 * Lookup the registration information of another client.
@@ -48,7 +57,7 @@ public interface PresenceService
 	 * @return The RegistrationInfo info for the client, or null if no such
 	 *         client was found.
 	 */
-	Set<Serializable> lookup(String name) throws ServiceException;
+	RegistrationInfo lookup(String name) throws ServiceException;
 
 	/**
 	 * Leave the current Chord network. Client's must call this before they

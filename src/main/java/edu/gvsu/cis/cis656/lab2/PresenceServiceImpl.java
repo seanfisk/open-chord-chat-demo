@@ -4,7 +4,9 @@
 package edu.gvsu.cis.cis656.lab2;
 
 import java.io.Serializable;
+import java.net.InetAddress;
 import java.net.MalformedURLException;
+import java.net.UnknownHostException;
 import java.util.Set;
 
 import de.uniba.wiai.lspi.chord.data.URL;
@@ -20,78 +22,152 @@ public class PresenceServiceImpl implements PresenceService
 {
 	private Chord chord;
 
-	public PresenceServiceImpl(boolean master, String host, int port)
+	public PresenceServiceImpl(boolean isMaster, String host, int port)
 	{
 		super();
 
-		// url setups
+		// load properties
 		PropertiesLoader.loadPropertyFile();
-		String protocol = URL.KNOWN_PROTOCOLS.get(URL.SOCKET_PROTOCOL);
-		URL localURL = null;
-		try
-		{
-			localURL = new URL(protocol + "://localhost:8080/");
-		}
-		catch(MalformedURLException e)
-		{
-			throw new RuntimeException(e);
-		}
 
-		// create Chord network
-		if(master)
-		{
-			chord = new ChordImpl();
-			try
-			{
-				chord.create(localURL);
-			}
-			catch(ServiceException e)
-			{
-				throw new RuntimeException(" Could not create DHT ! ", e);
-			}
-		}
-		// join an existing Chord network
+		if(isMaster)
+			createNetwork(port);
 		else
-		{
-			URL bootstrapURL = null;
-			try
-			{
-				bootstrapURL = new URL(protocol + "://" + host + ':' + port);
-			}
-			catch(MalformedURLException e)
-			{
-				throw new RuntimeException(e);
-			}
-			chord = new ChordImpl();
-			try
-			{
-				chord.join(localURL, bootstrapURL);
-			}
-			catch(ServiceException e)
-			{
-				throw new RuntimeException("Could not join DHT!", e);
-			}
-		}
-
+			joinNetwork(host, port);
 	}
 
-	@Override public void register(RegistrationInfo userInfo) throws ServiceException
+	@Override
+	public boolean register(RegistrationInfo userInfo) throws ServiceException
 	{
-		chord.insert(new StringKey(userInfo.getUserName()), userInfo);
+		StringKey key = new StringKey(userInfo.getUserName());
+
+		// only allow unique usernames
+		if(!chord.retrieve(key).isEmpty())
+			return false;
+
+		chord.insert(key, userInfo);
+		return true;
 	}
 
-	@Override public void unregister(RegistrationInfo userInfo) throws ServiceException
+	@Override
+	public boolean updateRegistrationInfo(RegistrationInfo userInfo) throws ServiceException
 	{
+		StringKey key = new StringKey(userInfo.getUserName());
+		Set<Serializable> valueSet = chord.retrieve(key);
+		if(valueSet.isEmpty())
+			return false;
+
+		// we are assuming only one value per key, since we restrict this in
+		// register()
+		chord.remove(key, (Serializable) valueSet.toArray()[0]);
+		chord.insert(key, userInfo);
+		return true;
+	}
+
+	@Override
+	public void unregister(RegistrationInfo userInfo) throws ServiceException
+	{
+		// we are assuming only one value per key, since we restrict this in
+		// register()
 		chord.remove(new StringKey(userInfo.getUserName()), userInfo);
 	}
 
-	@Override public Set<Serializable> lookup(String name) throws ServiceException
+	@Override
+	public RegistrationInfo lookup(String name) throws ServiceException
 	{
-		return chord.retrieve(new StringKey(name));
+		// we are assuming only one value per key, since we restrict this in
+		// register()
+		return (RegistrationInfo) chord.retrieve(new StringKey(name)).toArray()[0];
 	}
 
-	@Override public void leave() throws ServiceException
+	@Override
+	public void leave() throws ServiceException
 	{
 		chord.leave();
+	}
+
+	private void createNetwork(int port)
+	{
+		// create a new Chord network
+		String protocol = URL.KNOWN_PROTOCOLS.get(URL.SOCKET_PROTOCOL);
+
+		// local url
+		String localURLStr;
+		URL localURL = null;
+		try
+		{
+			localURLStr = protocol + "://" + InetAddress.getLocalHost().getHostAddress() + ':' + port + '/';
+		}
+		catch(UnknownHostException e)
+		{
+			throw new RuntimeException(e);
+		}
+		try
+		{
+			localURL = new URL(localURLStr);
+		}
+		catch(MalformedURLException e)
+		{
+			throw new RuntimeException("Malformed URL: " + localURLStr, e);
+		}
+
+		// actually create the network
+		chord = new ChordImpl();
+		try
+		{
+			chord.create(localURL);
+		}
+		catch(ServiceException e)
+		{
+			throw new RuntimeException(" Could not create DHT ! ", e);
+		}
+	}
+
+	private void joinNetwork(String bootstrapHost, int bootstrapPort)
+	{
+		// join an existing Chord network
+		String protocol = URL.KNOWN_PROTOCOLS.get(URL.SOCKET_PROTOCOL);
+
+		// local url
+		String localURLStr;
+		URL localURL = null;
+		try
+		{
+			localURLStr = protocol + "://" + InetAddress.getLocalHost().getHostAddress() + '/';
+		}
+		catch(UnknownHostException e)
+		{
+			throw new RuntimeException(e);
+		}
+		try
+		{
+			localURL = new URL(localURLStr);
+		}
+		catch(MalformedURLException e)
+		{
+			throw new RuntimeException("Malformed URL: " + localURLStr, e);
+		}
+
+		// bootstrap url
+		String bootstrapURLStr = protocol + "://" + bootstrapHost + ':' + bootstrapPort + '/';
+		URL bootstrapURL = null;
+		try
+		{
+			bootstrapURL = new URL(bootstrapURLStr);
+		}
+		catch(MalformedURLException e)
+		{
+			throw new RuntimeException("Malformed URL: " + bootstrapURLStr, e);
+		}
+
+		// actually join the network
+		chord = new ChordImpl();
+		try
+		{
+			chord.join(localURL, bootstrapURL);
+		}
+		catch(ServiceException e)
+		{
+			throw new RuntimeException("Could not join DHT!", e);
+		}
 	}
 }

@@ -12,7 +12,7 @@ define 'talk-chord' do
   project.group = 'gvsu'
   manifest['Copyright'] = 'Sean Fisk (C) 2011'
   compile.options.target = '1.6'
-
+  
   # dependencies
   ## ibiblio public
   repositories.remote << 'http://www.ibiblio.org/maven2'
@@ -45,7 +45,7 @@ define 'talk-chord' do
   
   ## install to local maven repository
   install jline
-
+  
   ## log4j - openchord dependency
   LOG4J = 'log4j:log4j:jar:1.2.15'
   
@@ -70,5 +70,5 @@ define 'talk-chord' do
   main_class = 'edu.gvsu.cis.cis656.lab2.ChatClient'
   manifest['Main-Class'] = main_class
   
-  run.using :main => [main_class, '-master', Faker::Name.first_name, "#{host}:#{port}"]
+  run.using :main => [main_class]#, Faker::Name.first_name, "#{host}:#{port}"]
 end

@@ -88,39 +88,12 @@ public class RegistrationInfo implements Serializable
 	}
 
 	/**
-	 * @param userName
-	 *            the userName to set
-	 */
-	public void setUserName(String userName)
-	{
-		this.userName = userName;
-	}
-
-	/**
-	 * @param host
-	 *            the host to set
-	 */
-	public void setHost(String host)
-	{
-		this.host = host;
-	}
-
-	/**
 	 * @param status
 	 *            the status to set
 	 */
 	public void setStatus(boolean status)
 	{
 		this.status = status;
-	}
-
-	/**
-	 * @param port
-	 *            the port to set
-	 */
-	public void setPort(int port)
-	{
-		this.port = port;
 	}
 
 	/**
