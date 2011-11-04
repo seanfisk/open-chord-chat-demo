@@ -5,12 +5,18 @@ package edu.gvsu.cis.cis656.lab2;
 
 import java.io.IOException;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 import java.util.regex.Pattern;
 
 import jline.ConsoleReader;
 import jline.SimpleCompletor;
+
+import com.beust.jcommander.JCommander;
+import com.beust.jcommander.Parameter;
+import com.beust.jcommander.internal.Lists;
+
 import de.uniba.wiai.lspi.chord.service.ServiceException;
 import edu.gvsu.cis.cis656.lab2.command.AvailableCommand;
 import edu.gvsu.cis.cis656.lab2.command.BusyCommand;
@@ -24,6 +30,25 @@ import edu.gvsu.cis.cis656.lab2.util.PromptBuilder;
  */
 public class ChatClient
 {
+	private class CommandLineOptions
+	{
+		@Parameter
+		private List<String> parameters = Lists.newArrayList();
+		
+		@Parameter(names = "-master", description = "Make this client the master node.")
+		private boolean master = true;
+				
+		public List<String> getParameters()
+		{
+			return parameters;
+		}
+		
+		public boolean getMaster()
+		{
+			return master;
+		}
+	}
+	
 	public static void main(String[] args)
 	{
 		new ChatClient().go(args);
@@ -31,24 +56,34 @@ public class ChatClient
 
 	void go(String[] args)
 	{
+		CommandLineOptions options = new CommandLineOptions();
+		JCommander jcommander = new JCommander(options, args);
+		List<String> parameters = options.getParameters();
+		
 		// check number of args
-		if(args.length < 1 || args.length > 2 || args[0].equalsIgnoreCase("--help") || args[0].equalsIgnoreCase("-h"))
-			usage();
+		if(parameters.size() < 1 || parameters.size() > 2)
+		{
+			jcommander.usage();
+			System.exit(1);
+		}
 
 		// parse args
-		String userName = args[0];
+		String userName = parameters.get(0);
 		String host = null;
 		int port = 0;
-		if(args.length == 2)
+		if(parameters.size() == 2)
 		{
-			String hostPort[] = args[1].split(":", 2);
+			String hostPort[] = parameters.get(1).split(":", 2);
 			if(hostPort.length > 0)
 			{
 				host = hostPort[0];
 
 				// print usage - must give a host if a port is given
 				if(host.length() == 0)
-					usage();
+				{					
+					jcommander.usage();
+					System.exit(1);
+				}
 			}
 			if(hostPort.length > 1)
 			{
@@ -68,7 +103,7 @@ public class ChatClient
 		try
 		{
 			// construct presence service
-			PresenceService presenceService = new PresenceServiceImpl(true, host, port);
+			PresenceService presenceService = new PresenceServiceImpl(options.getMaster(), host, port);
 
 			// bind the server socket behind the message listener
 			MessageListener messageListener = new MessageListener();
