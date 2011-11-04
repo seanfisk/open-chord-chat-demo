@@ -1,0 +1,4 @@
+# This project requires the following ruby gems, buildr addons
+gems:
+  # generation of fake names for sample runs
+  - faker
