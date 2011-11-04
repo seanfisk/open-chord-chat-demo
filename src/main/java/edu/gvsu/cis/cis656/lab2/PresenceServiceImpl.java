@@ -76,7 +76,10 @@ public class PresenceServiceImpl implements PresenceService
 	{
 		// we are assuming only one value per key, since we restrict this in
 		// register()
-		return (RegistrationInfo) chord.retrieve(new StringKey(name)).toArray()[0];
+		Set<Serializable> valueSet = chord.retrieve(new StringKey(name));
+		if(valueSet.isEmpty())
+			return null;
+		return (RegistrationInfo) valueSet.toArray()[0];
 	}
 
 	@Override
