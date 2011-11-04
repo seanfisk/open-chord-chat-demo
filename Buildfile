@@ -53,21 +53,9 @@ define 'talk-chord' do
   ### constants
   OPENCHORD_VERSION = '1.0.5'
   OPENCHORD = "openchord:openchord:jar:#{OPENCHORD_VERSION}"
-  OPENCHORD_FILE = "open-chord_#{OPENCHORD_VERSION}"
-  OPENCHORD_URL = "http://sourceforge.net/projects/open-chord/files/Open%20Chord%201.0/#{OPENCHORD_VERSION}/#{OPENCHORD_FILE}.zip/download"
-  
-  ## download from sourceforge
-  openchord_zip = download("#{path_to(:target)}/#{OPENCHORD_FILE}.zip" => OPENCHORD_URL)
-  
-  ## extract to target directory
-  openchord_unzipped_dir = unzip(path_to(:target, OPENCHORD_FILE) => openchord_zip)
-  
-  ## get jar file
-  OPENCHORD_FILE.gsub!('-', '') # yay for consistent naming
-  openchord_jar = file("#{openchord_unzipped_dir}/dist/#{OPENCHORD_FILE}.jar" => openchord_unzipped_dir)
   
   ## create artifact
-  openchord = artifact(OPENCHORD).from(openchord_jar)
+  openchord = artifact(OPENCHORD).from("lib/openchord_#{OPENCHORD_VERSION}.jar")
   
   ## install to local maven repository
   install openchord
