@@ -27,7 +27,6 @@ Compile and Run
 
 * Grab the code:
 
-		:::bash
 		git clone https://seanfisk@git.code.sf.net/p/sf-gvsu-cis656/lab3/code sf-gvsu-cis656-lab3-code
 		cd sf-gvsu-cis656-lab3-code
 
