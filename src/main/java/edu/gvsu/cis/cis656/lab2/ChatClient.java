@@ -136,15 +136,19 @@ public class ChatClient
 			consoleReader.setUseHistory(true);
 			consoleReader.setUsePagination(true);
 
-			String[] simpleCommands = {"talk", "busy", "available", "exit"};
-			SimpleCompletor simpleCommandsCompletor = new SimpleCompletor(simpleCommands);
-			consoleReader.addCompletor(simpleCommandsCompletor);
-
 			// add available commands
 			Command[] commandList = {new TalkCommand(presenceService, userInfo), new BusyCommand(presenceService, userInfo), new AvailableCommand(presenceService, userInfo), new ExitCommand(presenceService, userInfo)};
 			LinkedHashMap<String, Command> commands = new LinkedHashMap<String, Command>();
+			String[] simpleCommands = new String[commandList.length];
+			int commandIndex = 0;
 			for(Command command : commandList)
+			{
+				simpleCommands[commandIndex++] = command.getName();
 				commands.put(command.getName(), command);
+			}
+			
+			SimpleCompletor simpleCommandsCompletor = new SimpleCompletor(simpleCommands);
+			consoleReader.addCompletor(simpleCommandsCompletor);
 
 			// print out command list
 			System.out.println();
