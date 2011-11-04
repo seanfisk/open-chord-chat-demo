@@ -1,6 +1,6 @@
-package edu.gvsu.cis.cis656.lab2.util;
+package edu.gvsu.cis.cis656.lab3.util;
 
-import edu.gvsu.cis.cis656.lab2.RegistrationInfo;
+import edu.gvsu.cis.cis656.lab3.RegistrationInfo;
 
 public class PromptBuilder
 {

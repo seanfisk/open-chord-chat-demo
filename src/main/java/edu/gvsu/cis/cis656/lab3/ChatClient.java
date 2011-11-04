@@ -1,7 +1,7 @@
 /**
  * 
  */
-package edu.gvsu.cis.cis656.lab2;
+package edu.gvsu.cis.cis656.lab3;
 
 import java.io.IOException;
 import java.util.LinkedHashMap;
@@ -16,14 +16,14 @@ import jline.SimpleCompletor;
 import com.beust.jcommander.JCommander;
 
 import de.uniba.wiai.lspi.chord.service.ServiceException;
-import edu.gvsu.cis.cis656.lab2.cloptions.CommandLineOptions;
-import edu.gvsu.cis.cis656.lab2.cloptions.PortValidator;
-import edu.gvsu.cis.cis656.lab2.command.AvailableCommand;
-import edu.gvsu.cis.cis656.lab2.command.BusyCommand;
-import edu.gvsu.cis.cis656.lab2.command.Command;
-import edu.gvsu.cis.cis656.lab2.command.ExitCommand;
-import edu.gvsu.cis.cis656.lab2.command.TalkCommand;
-import edu.gvsu.cis.cis656.lab2.util.PromptBuilder;
+import edu.gvsu.cis.cis656.lab3.cloptions.CommandLineOptions;
+import edu.gvsu.cis.cis656.lab3.cloptions.PortValidator;
+import edu.gvsu.cis.cis656.lab3.command.AvailableCommand;
+import edu.gvsu.cis.cis656.lab3.command.BusyCommand;
+import edu.gvsu.cis.cis656.lab3.command.Command;
+import edu.gvsu.cis.cis656.lab3.command.ExitCommand;
+import edu.gvsu.cis.cis656.lab3.command.TalkCommand;
+import edu.gvsu.cis.cis656.lab3.util.PromptBuilder;
 
 /**
  * @author Sean Fisk <fiskse@mail.gvsu.edu>
@@ -240,7 +240,7 @@ public class ChatClient
 
 	private static void usage()
 	{
-		System.err.println("Usage:\n" + "Start a master node\n" + "java edu.gvsu.cis.cis656.lab2.ChatClient --master port user\n" + "\n" + "Start a regular node\n" + "java edu.gvsu.cis.cis656.lab2.ChatClient user host:port\n");
+		System.err.println("Usage:\n" + "Start a master node\n" + "java edu.gvsu.cis.cis656.lab3.ChatClient --master port user\n" + "\n" + "Start a regular node\n" + "java edu.gvsu.cis.cis656.lab3.ChatClient user host:port\n");
 		System.exit(1);
 	}
 }

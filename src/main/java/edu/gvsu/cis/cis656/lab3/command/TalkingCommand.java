@@ -1,7 +1,7 @@
 /**
  * 
  */
-package edu.gvsu.cis.cis656.lab2.command;
+package edu.gvsu.cis.cis656.lab3.command;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -9,9 +9,9 @@ import java.net.Socket;
 import java.rmi.UnknownHostException;
 
 import de.uniba.wiai.lspi.chord.service.ServiceException;
-import edu.gvsu.cis.cis656.lab2.PresenceService;
-import edu.gvsu.cis.cis656.lab2.RegistrationInfo;
-import edu.gvsu.cis.cis656.lab2.util.PromptBuilder;
+import edu.gvsu.cis.cis656.lab3.PresenceService;
+import edu.gvsu.cis.cis656.lab3.RegistrationInfo;
+import edu.gvsu.cis.cis656.lab3.util.PromptBuilder;
 
 public abstract class TalkingCommand extends Command
 {

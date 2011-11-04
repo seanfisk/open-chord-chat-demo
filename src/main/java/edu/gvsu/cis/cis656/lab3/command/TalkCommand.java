@@ -1,11 +1,11 @@
-package edu.gvsu.cis.cis656.lab2.command;
+package edu.gvsu.cis.cis656.lab3.command;
 
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
 import de.uniba.wiai.lspi.chord.service.ServiceException;
-import edu.gvsu.cis.cis656.lab2.PresenceService;
-import edu.gvsu.cis.cis656.lab2.RegistrationInfo;
+import edu.gvsu.cis.cis656.lab3.PresenceService;
+import edu.gvsu.cis.cis656.lab3.RegistrationInfo;
 
 // talk
 public class TalkCommand extends TalkingCommand

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package edu.gvsu.cis.cis656.lab2;
+package edu.gvsu.cis.cis656.lab3;
 
 import java.io.IOException;
 import java.io.Serializable;

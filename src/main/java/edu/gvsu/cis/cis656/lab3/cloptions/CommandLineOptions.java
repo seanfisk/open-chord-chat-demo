@@ -1,4 +1,4 @@
-package edu.gvsu.cis.cis656.lab2.cloptions;
+package edu.gvsu.cis.cis656.lab3.cloptions;
 
 import java.util.List;
 

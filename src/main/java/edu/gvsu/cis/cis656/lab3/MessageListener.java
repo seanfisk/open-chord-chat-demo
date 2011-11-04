@@ -1,7 +1,7 @@
 /**
  * 
  */
-package edu.gvsu.cis.cis656.lab2;
+package edu.gvsu.cis.cis656.lab3;
 
 import java.io.BufferedReader;
 import java.io.IOException;
