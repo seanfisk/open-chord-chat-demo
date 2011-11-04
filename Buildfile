@@ -5,7 +5,7 @@ define 'talk-chord' do
   
   # arguments
   host = 'localhost'
-  port = 2468
+  port = 9999
   
   # set up project specific information
   project.version = '1.0'
@@ -69,6 +69,13 @@ define 'talk-chord' do
   # running the application
   main_class = 'edu.gvsu.cis.cis656.lab3.ChatClient'
   manifest['Main-Class'] = main_class
-  
-  run.using :main => [main_class]#, Faker::Name.first_name, "#{host}:#{port}"]
+
+  ## two ways to run it - normal and master
+  ## please see <http://stackoverflow.com/questions/577944/how-to-run-rake-tasks-from-within-rake-tasks>
+  task 'run-normal' do
+    run.using(:main => [main_class, Faker::Name.first_name, "#{host}:#{port}"]).invoke
+  end
+  task 'run-master' do
+    run.using(:main => [main_class, '--master', port, Faker::Name.first_name]).invoke
+  end
 end
