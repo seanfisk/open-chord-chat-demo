@@ -1,8 +1,9 @@
 TODO for Lab 3
 ==============
 
-* Take -master flag correctly on the command line
-* Use Jewel CLI for command-line parsing
-* Get rid of the Serializable hack
-* Find out what professor wants for the Set<>, etc.
+* Completion for known friends
+* Rename lab2 to lab3
+* Ensure comments are correct
+* With Buildr, only extract the jars from the zip files
+* Add more run tasks to Buildr
 * Testing
