@@ -6,4 +6,4 @@ TODO for Lab 3
 	* However, a friend's name should also be completed when you *receive a message from them*. This is not yet implemented since the messages come as simple strings for now.
 * Ensure comments are correct
 * Testing
-* Use an InetSocketAddress for host and port
+* Use an InetSocketAddress for host and port (decided against it for now since that's not the way Engelsma does it)
